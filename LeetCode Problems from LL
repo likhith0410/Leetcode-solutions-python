@@ -19,20 +19,17 @@ Input: head = [[7,null],[13,0],[11,4],[10,2],[1,0]]
 Output: [[7,null],[13,0],[11,4],[10,2],[1,0]]
 
 # ✅ Approach:
-Step 1: Clone Nodes and Interleave
-For every node in the original list:
--Create a new node (copy) with the same value.
--Insert this new node right after the original node.
+Pass 1 – Interleaving:
+-Create a copy of each node.
+-Insert it right after the original node.
 
-Step 2: Set Random Pointers for Clones
-Now that each original node has its copy beside it:
--If original node's random points to X,
--Then copied node's random should point to X', which is X.next.
+Pass 2 – Assign .random pointers:
+-For each original node:
+-copy_node.random = original.random.next (because copy is just after original)
 
-Step 3: Separate the Lists
-We now separate the original and copied nodes into two independent lists:
--Restore the next pointers of the original list.
--Connect the next pointers of the copied list.
+Pass 3 – Separate the lists:
+-Restore the original list.
+-Extract the copied list.
 
 """
 # Definition for a Node.
