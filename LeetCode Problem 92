@@ -1,0 +1,58 @@
+LeetCode Problem 92: Reverse Linked List II
+Difficulty: Medium
+🧠 Problem Statement:
+Given the head of a singly linked list and two integers left and right where left <= right, reverse the nodes of the list from position left to position right, and return the modified list.
+
+✅ Example:
+Input:
+head = [1,2,3,4,5], left = 2, right = 4
+Output:
+[1,4,3,2,5]
+
+✅ Approach:
+Use a dummy node pointing to the head to simplify edge cases.
+-Move prev to the node before position left.
+-Reverse the sublist from left to right using pointer manipulation.
+-Reconnect the reversed sublist with the remaining list.
+
+✅ Code:
+python
+
+# Definition for singly-linked list.
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+class Solution:
+    def reverseBetween(self, head: Optional[ListNode], left: int, right: int) -> Optional[ListNode]:
+        if not head or left == right:
+            return head
+
+        dummy = ListNode(0)
+        dummy.next = head
+        prev = dummy
+
+        # Step 1: Move prev to one node before 'left'
+        for _ in range(left - 1):
+            prev = prev.next
+
+        # Step 2: Reverse sublist
+        current = prev.next
+        for _ in range(right - left):
+            temp = current.next
+            current.next = temp.next
+            temp.next = prev.next
+            prev.next = temp
+
+        return dummy.next
+🔁 Dry Run for head = [1,2,3,4,5], left = 2, right = 4
+Initial linked list: 1 → 2 → 3 → 4 → 5
+
+After sublist reversal (positions 2 to 4): 1 → 4 → 3 → 2 → 5
+
+📊 Time Complexity:
+O(n): We traverse the list once to reverse a part of it.
+
+🧠 Space Complexity:
+O(1): In-place reversal using pointer manipulation; no extra space needed.
