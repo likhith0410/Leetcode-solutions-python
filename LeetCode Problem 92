@@ -52,7 +52,11 @@ Initial linked list: 1 → 2 → 3 → 4 → 5
 After sublist reversal (positions 2 to 4): 1 → 4 → 3 → 2 → 5
 
 📊 Time Complexity:
-O(n): We traverse the list once to reverse a part of it.
+-O(n): We traverse the list once to reverse a part of it.
+-Describes how the runtime of your algorithm scales with input size (n, m, etc.).
+-Common notations: O(1), O(n), O(log n), O(n²), etc.
 
 🧠 Space Complexity:
-O(1): In-place reversal using pointer manipulation; no extra space needed.
+-O(1): In-place reversal using pointer manipulation; no extra space needed.
+-Describes how much extra memory your algorithm uses (excluding input).
+-Includes data structures, recursion stacks, etc.
