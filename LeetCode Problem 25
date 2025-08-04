@@ -66,3 +66,9 @@ class Solution:
 For head = [1,2,3,4,5], k = 3
 Initial linked list: 1 → 2 → 3 → 4 → 5
 After reversing first group of 3: 3 → 2 → 1 → 4 → 5
+
+📊 Time Complexity:
+O(n) — Each node is visited and reversed at most once.
+
+🧠 Space Complexity:
+O(1) — In-place reversal using constant extra memory.
