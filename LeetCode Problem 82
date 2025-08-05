@@ -10,3 +10,17 @@ Example:
 Input: 1 -> 2 -> 3 -> 3 -> 4 -> 4 -> 5
 Output: 1 -> 2 -> 5
 
+💡 Approach Explanation
+We use a dummy node pointing to the head of the list to easily handle edge cases like removing the first few nodes.
+We then use two pointers:
+-prev: tracks the last node before a duplicate group
+-head: to iterate through the list
+
+Steps:
+
+-If head and head.next are duplicates, we move head forward to skip all nodes with that value.
+-Then we set prev.next = head.next to remove the entire group.
+-If no duplicate is found, move prev forward.
+-Move head forward in each iteration.
+At the end, return dummy.next to skip the dummy node.
+
