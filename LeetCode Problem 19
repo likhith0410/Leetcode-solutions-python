@@ -49,3 +49,23 @@ class Solution:
 
         # Return the new head (could be different if head was removed)
         return dummy.next
+
+
+🔁 Dry Run:
+Input: head = [1, 2, 3, 4, 5], n = 2
+-dummy → [0 | *] → 1 → 2 → 3 → 4 → 5
+-After moving fast ahead by 3 steps: fast is at 3, slow is at dummy.
+-Move both one by one → when fast hits None, slow is at node 3.
+-Remove node 4: slow.next = slow.next.next
+
+✅ Final List: 1 → 2 → 3 → 5
+
+📊 Time Complexity:
+O(n):
+Traverse the entire list once.
+
+🧠 Space Complexity:
+O(1):
+Only constant pointers (fast, slow, dummy) used.
+
+
