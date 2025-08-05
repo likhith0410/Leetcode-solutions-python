@@ -24,3 +24,25 @@ Steps:
 -Move head forward in each iteration.
 At the end, return dummy.next to skip the dummy node.
 
+class Solution:
+    def deleteDuplicates(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        dummy = ListNode(0, head)  # Dummy node before the head
+        prev = dummy               # Pointer to track the last confirmed unique node
+
+        while head:
+            if head.next and head.val == head.next.val:
+                # Skip all nodes with same value
+                while head.next and head.val == head.next.val:
+                    head = head.next
+                # Skip the last duplicate
+                prev.next = head.next
+            else:
+                prev = prev.next  # Move prev forward only when no deletion
+
+            head = head.next  # Move head forward
+
+        return dummy.next
+
+📈 Time and Space Complexity
+-Time Complexity: O(n) – We traverse each node once.
+-Space Complexity: O(1) – No extra space except dummy node.
