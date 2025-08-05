@@ -1,0 +1,25 @@
+LeetCode Problem 19: Remove Nth Node From End of List
+Difficulty: Medium
+
+🧠 Problem Statement:
+Given the head of a singly linked list, remove the nth node from the end of the list and return its head.
+
+✅ Example:
+Input:
+head = [1,2,3,4,5], n = 2
+
+Output:
+[1,2,3,5]
+
+✅ Approach:
+Use the two-pointer technique (fast and slow pointers) along with a dummy node to simplify edge cases.
+
+Steps:
+
+-Use a dummy node pointing to head to handle cases like removing the head.
+-Move fast pointer n + 1 steps ahead (including dummy).
+-Move both fast and slow pointers until fast reaches the end.
+-slow will now be just before the node to remove.
+-Skip the target node: slow.next = slow.next.next.
+This ensures a one-pass solution without needing to count the total length first.
+
