@@ -1,0 +1,90 @@
+LeetCode Problem 86: Partition List
+
+Difficulty: Medium
+
+🧠 Problem Statement:
+Given the head of a linked list and a value x, partition it such that all nodes less than x come before nodes greater than or equal to x.
+
+👉 The relative order of the nodes in each partition must be preserved.
+
+✅ Example:
+Input:
+head = [1,4,3,2,5,2], x = 3
+
+Output:
+[1,2,2,4,3,5]
+
+✅ Approach:
+We use the two-list method with dummy nodes:
+
+Steps:
+
+Create two dummy heads:
+-before_head → list for nodes < x
+-after_head → list for nodes >= x
+-Traverse the original list:
+-If current.val < x, append to before list.
+-Else, append to after list.
+-Terminate the after list properly (after.next = None) to avoid cycles.
+-Connect the end of before list to the start of after list.
+-Return the merged list starting from before_head.next.
+This ensures stable partitioning with preserved order.
+
+💻 Code (Python):
+
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def partition(self, head: Optional[ListNode], x: int) -> Optional[ListNode]:
+        # Create two dummy heads
+        before_head = ListNode(0)  # list with values < x
+        after_head = ListNode(0)   # list with values >= x
+        
+        # Pointers to build the two lists
+        before = before_head
+        after = after_head
+        
+        # Traverse original list
+        current = head
+        while current:
+            if current.val < x:
+                before.next = current  # link node to 'before' list
+                before = before.next
+            else:
+                after.next = current  # link node to 'after' list
+                after = after.next
+            current = current.next
+        
+        # Important: avoid cycle
+        after.next = None
+        
+        # Connect before list to after list
+        before.next = after_head.next
+        
+        return before_head.next
+
+
+🔁 Dry Run:
+Input: head = [1,4,3,2,5,2], x = 3
+
+Traverse:
+
+1 → goes to before list → [1]
+4 → goes to after list → [4]
+3 → goes to after list → [4,3]
+2 → goes to before list → [1,2]
+5 → goes to after list → [4,3,5]
+2 → goes to before list → [1,2,2]
+
+Connect: [1,2,2] → [4,3,5]
+
+✅ Final List: 1 → 2 → 2 → 4 → 3 → 5
+
+📊 Time Complexity:
+O(n): Single traversal of the list.
+
+🧠 Space Complexity:
+O(1): Only pointers and dummy nodes used (no extra data structures).
