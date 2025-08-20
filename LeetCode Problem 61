@@ -1,0 +1,75 @@
+LeetCode Problem 61: Rotate List
+
+Difficulty: Medium
+
+🧠 Problem Statement:
+Given the head of a linked list, rotate the list to the right by k places.
+
+✅ Example:
+Input:
+head = [1,2,3,4,5], k = 2
+
+Output:
+[4,5,1,2,3]
+
+✅ Approach:
+We use a length calculation + reconnection strategy:
+
+Steps:
+-Handle edge cases where list is empty, has one node, or k = 0.
+-Find the length of the list and the tail node.
+-Adjust k using k % length (rotation by length gives the same list).
+-Find the new tail (at position length - k - 1 from the head).
+-The new head will be new_tail.next.
+-Break the list at new_tail, and connect the old tail to the old head.
+
+code:
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def rotateRight(self, head: Optional[ListNode], k: int) -> Optional[ListNode]:
+        
+        if not head or not head.next or k == 0:
+            return head
+        
+        # Step 1: Find the length of the list
+        length = 1
+        tail = head
+        while tail.next:
+            tail = tail.next
+            length += 1
+        
+        # Step 2: Adjust k
+        k = k % length
+        if k == 0:
+            return head
+        
+        # Step 3: Find the new tail (length - k - 1 steps from head)
+        new_tail = head
+        for _ in range(length - k - 1):
+            new_tail = new_tail.next
+        
+        # Step 4: Rearrange
+        new_head = new_tail.next
+        new_tail.next = None
+        tail.next = head
+        
+        return new_head
+
+🔁 Dry Run:
+Input: head = [1,2,3,4,5], k = 2
+Length = 5, Tail = node 5.
+Adjust k → k = 2 % 5 = 2.
+New tail = node at index 5 - 2 - 1 = 2 → node 3.
+New head = node 4.
+Break at node 3, connect tail (5) → head (1).
+✅ Final List: 4 → 5 → 1 → 2 → 3
+
+📊 Time Complexity:
+O(n): One pass to find length + one pass to rearrange.
+
+🧠 Space Complexity:
+O(1): Only constant extra variables used.
