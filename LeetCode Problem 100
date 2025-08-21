@@ -1,0 +1,60 @@
+LeetCode Problem 100: Same Tree
+
+Difficulty: Easy
+
+🧠 Problem Statement:
+Given the roots of two binary trees p and q, write a function to check if they are the same or not.
+
+👉 Two binary trees are considered the same if:
+-They are structurally identical.
+-Their corresponding nodes have the same values.
+
+Input: p = [1,2,3], q = [1,2,3]
+Output: true
+
+✅ Approach:
+Use recursion to compare the two trees node by node:
+-Base Case 1: If both nodes are None, they are equal → return True.
+-Base Case 2: If one is None and the other is not, they differ → return False.
+-Value Check: If p.val != q.val, return False.
+-Recursive Step: Check p.left == q.left and p.right == q.right.
+
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+
+class Solution:
+    def isSameTree(self, p: Optional[TreeNode], q: Optional[TreeNode]) -> bool:
+        # Case 1: Both are None → same
+        if not p and not q:
+            return True
+        
+        # Case 2: One is None → not same
+        if not p or not q:
+            return False
+        
+        # Case 3: Values differ → not same
+        if p.val != q.val:
+            return False
+        
+        # Recursively check left & right subtrees
+        return self.isSameTree(p.left, q.left) and self.isSameTree(p.right, q.right)
+
+🔁 Dry Run:
+Input: p = [1,2,3], q = [1,2,3]
+Compare root (1 vs 1) → same.
+Compare left (2 vs 2) → same.
+Compare right (3 vs 3) → same.
+Both trees fully matched.
+✅ Final Output: True
+
+📊 Time Complexity:
+O(n): Visit each node once (where n = number of nodes).
+
+🧠 Space Complexity:
+O(h): Recursion stack (h = tree height).
+-Worst case skewed tree → O(n).
+-Best case balanced tree → O(log n).
