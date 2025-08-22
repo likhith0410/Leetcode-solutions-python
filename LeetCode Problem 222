@@ -1,0 +1,102 @@
+LeetCode Problem 222: Count Complete Tree Nodes
+
+Difficulty: Easy
+
+🧠 Problem Statement:
+Given the root of a complete binary tree, return the number of nodes in the tree.
+
+👉 Properties of a complete binary tree:
+-Every level (except possibly the last) is completely filled.
+-The last level has nodes filled from left to right.
+-Your algorithm must run in less than O(n) time.
+
+Example:
+Input:root = [1,2,3,4,5,6]
+Output:6
+
+✅ Approach:
+
+We use the properties of a complete binary tree to optimize counting:
+Helper Functions:
+-leftHeight(node) → traverse only left children to calculate height.
+-rightHeight(node) → traverse only right children to calculate height.
+-Check if Perfect Tree:
+-If leftHeight == rightHeight, then the tree is a perfect binary tree.
+-Node count in a perfect binary tree = 2^h - 1 = (1 << h) - 1.
+Otherwise:
+-Recursively count nodes in left and right subtrees.
+-Formula: 1 + countNodes(left) + countNodes(right).
+This avoids visiting all nodes individually → reducing complexity.
+
+💻 Code (Python):
+
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+
+class Solution:
+    def countNodes(self, root: Optional[TreeNode]) -> int:
+        if not root:
+            return 0
+
+        def leftHeight(node):
+            h = 0
+            while node:
+                h += 1
+                node = node.left
+            return h
+
+        def rightHeight(node):
+            h = 0
+            while node:
+                h += 1
+                node = node.right
+            return h
+
+        lh = leftHeight(root)
+        rh = rightHeight(root)
+
+        if lh == rh:
+            # Tree is perfect → directly calculate
+            return (1 << lh) - 1   # same as 2^lh - 1
+        else:
+            # Otherwise, recursively count
+            return 1 + self.countNodes(root.left) + self.countNodes(root.right)
+
+
+🔁 Dry Run:
+Input: root = [1,2,3,4,5,6]
+
+        1
+       / \
+      2   3
+     / \  /
+    4  5 6
+
+At root (1):
+lh = 3, rh = 2 → not perfect → recurse.
+
+Left subtree rooted at 2:
+lh = 2, rh = 2 → perfect tree with 2^2 - 1 = 3 nodes.
+
+Right subtree rooted at 3:
+lh = 2, rh = 1 → not perfect → recurse.
+
+Left child (6): single node → count = 1.
+Right child (None) → count = 0.
+Total for subtree = 1 + 1 + 0 = 2.
+Total count = 1 (root) + 3 (left) + 2 (right) = 6.
+
+✅ Final Output: 6
+📊 Time Complexity:
+
+O(log² n):
+Computing left & right heights = O(log n).
+Recursion depth = O(log n).
+Total = O(log n × log n).
+
+🧠 Space Complexity:
+O(log n): Recursion stack depth.
