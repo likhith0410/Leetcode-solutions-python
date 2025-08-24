@@ -1,0 +1,70 @@
+LeetCode Problem 226: Invert Binary Tree
+
+Difficulty: Easy
+
+🧠 Problem Statement:
+Given the root of a binary tree, invert the tree, and return its root.
+
+👉 Inverting a binary tree means swapping every left child with its corresponding right child recursively.
+
+✅ Example:
+
+Input:  root = [4,2,7,1,3,6,9]
+Output: [4,7,2,9,6,3,1]
+
+
+✅ Approach:
+We can solve this using recursion:
+
+-Base Case: If the tree is empty (root == None), return None.
+-Swap Children: At each node, swap its left and right child.
+-Recursive Step: Recursively invert the left and right subtrees.
+-Return the root after all swaps are done.
+-This ensures that the inversion propagates down the entire tree.
+
+💻 Code (Python):
+
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+
+class Solution:
+    def invertTree(self, root: Optional[TreeNode]) -> Optional[TreeNode]:
+        if not root:     # base case
+            return None  
+
+        # Step A: swap left and right children
+        root.left, root.right = root.right, root.left  
+
+        # Step B: recursively invert left subtree
+        self.invertTree(root.left)
+
+        # Step C: recursively invert right subtree
+        self.invertTree(root.right)
+
+        return root
+
+
+🔁 Dry Run:
+Input: root = [4,2,7,1,3,6,9]
+
+    4                   4
+   / \                 / \
+  2   7     --->      7   2
+ / \ / \             / \ / \
+1  3 6  9           9  6 3  1
+
+
+✅ Final Output: [4,7,2,9,6,3,1]
+
+📊 Time Complexity:
+-O(n): Each node is visited once.
+
+🧠 Space Complexity:
+
+-O(h): Recursion stack, where h is the height of the tree.
+-Worst case (skewed tree) → O(n)
+-Best case (balanced tree) → O(log n)
