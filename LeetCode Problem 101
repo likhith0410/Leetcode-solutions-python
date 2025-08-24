@@ -1,0 +1,76 @@
+LeetCode Problem 101: Symmetric Tree
+
+Difficulty: Easy
+
+🧠 Problem Statement:
+Given the root of a binary tree, check whether it is a mirror of itself (i.e., symmetric around its center).
+
+✅ Example:
+
+Input:  root = [1,2,2,3,4,4,3]  
+Output: true
+
+
+✅ Approach:
+We can solve this using recursion by checking if the left and right subtrees are mirrors of each other:
+-Base Case 1: If both subtrees are None, they are symmetric.
+-Base Case 2: If only one is None, they are not symmetric.
+-Check Values: If both nodes exist, check that:
+--The values are equal.
+--The left subtree of one is a mirror of the right subtree of the other.
+--The right subtree of one is a mirror of the left subtree of the other.
+-Start by comparing root.left and root.right.
+
+This ensures the tree is checked level by level for symmetry.
+
+💻 Code (Python):
+
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+
+class Solution:
+    def isSymmetric(self, root: Optional[TreeNode]) -> bool:
+        if not root:
+            return True
+        return self.isMirror(root.left, root.right)
+
+    def isMirror(self, t1: Optional[TreeNode], t2: Optional[TreeNode]) -> bool:
+        if not t1 and not t2:
+            return True
+        if not t1 or not t2:
+            return False
+        return (t1.val == t2.val) and \
+               self.isMirror(t1.left, t2.right) and \
+               self.isMirror(t1.right, t2.left)
+
+
+🔁 Dry Run:
+Input: root = [1,2,2,3,4,4,3]
+
+        1
+       / \
+      2   2
+     / \ / \
+    3  4 4  3
+
+
+Compare left 2 and right 2 → equal ✅
+Compare left 3 with right 3 → equal ✅
+Compare left 4 with right 4 → equal ✅
+
+No mismatches → tree is symmetric.
+
+✅ Final Output: true
+
+📊 Time Complexity:
+-O(n): Each node is visited once.
+
+🧠 Space Complexity:
+
+O(h): Recursion stack, where h is the height of the tree.
+-Worst case (skewed tree) → O(n)
+-Best case (balanced tree) → O(log n)
