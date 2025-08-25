@@ -1,0 +1,88 @@
+LeetCode Problem 106: Construct Binary Tree from Inorder and Postorder Traversal
+
+Difficulty: Medium
+
+🧠 Problem Statement:
+Given two integer arrays inorder and postorder where inorder is the inorder traversal of a binary tree and postorder is the postorder traversal of the same tree, construct and return the binary tree.
+
+✅ Example:
+Input:  inorder = [9,3,15,20,7], postorder = [9,15,7,20,3]  
+Output: [3,9,20,null,null,15,7]  
+
+
+✅ Approach:
+We can solve this using recursion and a hashmap:
+
+Observation:
+-In postorder, the last element is always the root.
+-In inorder, the root splits the array into left subtree and right subtree.
+Steps:
+-Build a hashmap (inorder_map) to quickly find the index of each node in inorder.
+-Pop elements from the end of postorder to get the root.
+-Recursively build the right subtree first (important because postorder is consumed from the end).
+-Then recursively build the left subtree.
+-Return the root node after recursive construction.
+This ensures we rebuild the tree correctly in O(n) time.
+
+💻 Code (Python):
+
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+
+class Solution:
+    def buildTree(self, inorder: List[int], postorder: List[int]) -> Optional[TreeNode]:
+        # Map each value to its index in inorder for O(1) lookup
+        inorder_map = {val: idx for idx, val in enumerate(inorder)}
+        
+        def array_to_tree(left, right):
+            # If no elements to construct subtree
+            if left > right:
+                return None
+
+            # 1️⃣ Root = last element from postorder
+            root_val = postorder.pop()
+            root = TreeNode(root_val)
+
+            # 2️⃣ Find root index in inorder
+            index = inorder_map[root_val]
+
+            # 3️⃣ Build right subtree first, then left subtree
+            root.right = array_to_tree(index + 1, right)
+            root.left = array_to_tree(left, index - 1)
+
+            return root
+
+        # Build entire tree
+        return array_to_tree(0, len(inorder) - 1)
+
+
+🔁 Dry Run:
+Input: inorder = [9,3,15,20,7], postorder = [9,15,7,20,3]
+Root = 3 (last in postorder)
+In inorder → [9] | 3 | [15,20,7]
+Left = [9], Right = [15,20,7]
+Next root = 20 (from postorder)
+In inorder → [15] | 20 | [7]
+Left = [15], Right = [7]
+Next roots = 7, 15, 9 fill in accordingly.
+
+Final Tree:
+
+        3
+       / \
+      9   20
+         /  \
+        15   7
+
+
+✅ Final Output: [3,9,20,null,null,15,7]
+
+📊 Time Complexity:
+-O(n): Each node is processed once using hashmap lookups.
+
+🧠 Space Complexity:
+-O(n): Hashmap storage + recursion stack.
