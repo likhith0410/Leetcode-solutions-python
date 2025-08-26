@@ -1,0 +1,90 @@
+LeetCode Problem 103: Binary Tree Zigzag Level Order Traversal
+
+Difficulty: Medium
+
+🧠 Problem Statement:
+
+Given the root of a binary tree, return the zigzag level order traversal of its nodes' values.
+(i.e., from left to right, then right to left for the next level, and alternate between).
+
+✅ Example:
+
+Input: root = [3,9,20,null,null,15,7]
+Output: [[3],[20,9],[15,7]]
+
+✅ Approach:
+We can solve this using BFS with direction control:
+Observation:
+-Level order traversal is similar to Problem 102.
+-The only difference is that every alternate level should be reversed.
+
+Steps:
+If the tree is empty → return an empty list.
+Use a queue initialized with the root node.
+Keep a boolean flag left_to_right = True to control direction.
+For each level:
+-Process all nodes in the queue.
+-Add their values to level_nodes.
+-Push their children into the queue.
+-If the current direction is right-to-left, reverse level_nodes.
+Append the level’s result into result.
+Flip the direction for the next level.
+Return the final result.
+
+💻 Code (Python):
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+
+from collections import deque
+
+class Solution:
+    def zigzagLevelOrder(self, root: Optional[TreeNode]) -> List[List[int]]:
+        if not root:
+            return []
+
+        result = []
+        queue = deque([root])
+        left_to_right = True
+
+        while queue:
+            level_size = len(queue)
+            level_nodes = []
+
+            for _ in range(level_size):
+                node = queue.popleft()
+                level_nodes.append(node.val)
+
+                if node.left:
+                    queue.append(node.left)
+                if node.right:
+                    queue.append(node.right)
+
+            # Reverse level if needed
+            if not left_to_right:
+                level_nodes.reverse()
+
+            result.append(level_nodes)
+            left_to_right = not left_to_right  # flip direction
+
+        return result
+
+🔁 Dry Run:
+
+Input: root = [3,9,20,null,null,15,7]
+Start with root 3. Queue = [3] → Direction = Left→Right
+Level 1 = [3]
+Queue = [9,20] → Direction = Right→Left
+Level 2 = [20,9]
+Queue = [15,7] → Direction = Left→Right
+Level 3 = [15,7]
+Final Output: [[3],[20,9],[15,7]]
+
+📊 Time Complexity:
+O(n): Each node is visited once.
+
+🧠 Space Complexity:
+O(n): Queue storage in BFS + result list.
