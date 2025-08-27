@@ -1,0 +1,70 @@
+LeetCode Problem 530: Minimum Absolute Difference in BST
+
+Difficulty: Easy
+
+🧠 Problem Statement:
+Given the root of a Binary Search Tree (BST), return the minimum absolute difference between the values of any two different nodes in the tree.
+
+✅ Example:
+Input: root = [4,2,6,1,3]
+Output: 1
+
+✅ Approach:
+We can solve this using Inorder Traversal of the BST:
+Observation:
+-Inorder traversal of a BST gives sorted values.
+-The minimum absolute difference will always be between two consecutive nodes in this sorted order.
+Steps:
+-Perform inorder traversal of the BST.
+-Keep track of the previous visited node (prev).
+-At each step, compute the difference between the current node and prev.
+-Update min_diff whenever a smaller difference is found.
+-Return min_diff after traversal is complete.
+-This ensures O(n) traversal time.
+
+💻 Code (Python):
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+
+class Solution:
+    def getMinimumDifference(self, root: Optional[TreeNode]) -> int:
+        self.prev = None         # store previous node in inorder traversal
+        self.min_diff = float('inf')   # start with infinity
+
+        def inorder(node):
+            if not node:
+                return
+            
+            # Left
+            inorder(node.left)
+
+            # Process current node
+            if self.prev is not None:
+                # update min difference
+                self.min_diff = min(self.min_diff, abs(node.val - self.prev))
+            self.prev = node.val  # update prev to current
+            
+            # Right
+            inorder(node.right)
+
+        inorder(root)
+        return self.min_diff
+
+🔁 Dry Run:
+
+Input: root = [4,2,6,1,3]
+Inorder traversal → [1,2,3,4,6]
+Differences: |2-1|=1, |3-2|=1, |4-3|=1, |6-4|=2
+Minimum difference = 1
+
+Final Output: 1
+
+📊 Time Complexity:
+O(n): Each node is visited once.
+
+🧠 Space Complexity:
+O(h): Recursion stack, where h is the tree height (worst-case O(n) for skewed tree).
