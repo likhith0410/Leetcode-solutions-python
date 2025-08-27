@@ -1,0 +1,69 @@
+LeetCode Problem 230: Kth Smallest Element in a BST
+
+Difficulty: Medium
+
+🧠 Problem Statement:
+Given the root of a Binary Search Tree (BST) and an integer k, return the kth smallest value (1-indexed) of all the values of the nodes in the tree.
+
+✅ Example:
+Input: root = [3,1,4,null,2], k = 1
+Output: 1
+
+✅ Approach:
+We can solve this using Inorder Traversal (Iterative):
+Observation:
+-Inorder traversal of a BST gives nodes in sorted ascending order.
+-The kth element in this order is the kth smallest element.
+Steps:
+-Use a stack to perform iterative inorder traversal.
+-Keep a counter count to track how many nodes have been visited.
+-Each time we pop from the stack, we process the smallest node.
+-When count == k, return the node’s value.
+-Otherwise, continue traversal.
+-This ensures we only process nodes until we reach the kth one.
+
+💻 Code (Python):
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+
+class Solution:
+    def kthSmallest(self, root: Optional[TreeNode], k: int) -> int:
+        # Perform inorder traversal iteratively
+        stack = []
+        current = root
+        count = 0
+
+        while stack or current:
+            # Go to the leftmost node
+            while current:
+                stack.append(current)
+                current = current.left
+
+            # Pop the smallest node
+            current = stack.pop()
+            count += 1
+
+            # If this is the kth node, return its value
+            if count == k:
+                return current.val
+
+            # Move to the right subtree
+            current = current.right
+
+🔁 Dry Run:
+Input: root = [3,1,4,null,2], k = 1
+Inorder Traversal → [1,2,3,4]
+Visit 1st node → 1 → this is the k=1 element.
+Final Output: 1
+
+📊 Time Complexity:
+O(H + k):
+H = height of tree (time to reach leftmost).
+k = steps to find kth element.
+
+🧠 Space Complexity:
+O(H): Stack space for traversal (worst case O(n) in skewed tree).
