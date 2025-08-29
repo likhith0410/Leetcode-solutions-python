@@ -1,0 +1,87 @@
+LeetCode Problem 200: Number of Islands
+
+Difficulty: Medium
+
+🧠 Problem Statement:
+
+Given an m x n 2D binary grid grid which represents a map of '1's (land) and '0's (water), return the number of islands.
+An island is surrounded by water and is formed by connecting adjacent lands horizontally or vertically.
+You may assume all four edges of the grid are surrounded by water.
+
+✅ Example:
+
+Input:
+
+grid = [
+  ["1","1","0","0","0"],
+  ["1","1","0","0","0"],
+  ["0","0","1","0","0"],
+  ["0","0","0","1","1"]
+]
+Output: 3
+
+✅ Approach:
+We can solve this using Depth-First Search (DFS):
+Observation:
+-Every time we encounter a '1', it represents new land → a new island.
+-We then flood-fill (DFS) that island and mark all connected land as '0' so it’s not counted again.
+
+Steps:
+-Traverse each cell in the grid.
+-If the cell is '1', increment islands.
+-Perform DFS to visit all connected '1's and mark them as '0'.
+-Continue until the entire grid is processed.
+
+Return islands.
+
+💻 Code (Python):
+class Solution:
+    def numIslands(self, grid: List[List[str]]) -> int:
+        if not grid:
+            return 0
+
+        rows, cols = len(grid), len(grid[0])
+        islands = 0
+
+        def dfs(r, c):
+            # Check boundaries & water
+            if r < 0 or c < 0 or r >= rows or c >= cols or grid[r][c] == "0":
+                return
+            # Mark current land as visited (turn it into water)
+            grid[r][c] = "0"
+            # Visit all 4 directions
+            dfs(r + 1, c)
+            dfs(r - 1, c)
+            dfs(r, c + 1)
+            dfs(r, c - 1)
+
+        # Traverse the grid
+        for r in range(rows):
+            for c in range(cols):
+                if grid[r][c] == "1":
+                    islands += 1  # Found a new island
+                    dfs(r, c)     # Flood-fill the island
+
+        return islands
+
+🔁 Dry Run:
+
+Input:
+
+[
+ ["1","1","0","0","0"],
+ ["1","1","0","0","0"],
+ ["0","0","1","0","0"],
+ ["0","0","0","1","1"]
+]
+
+Start at (0,0) → '1' → new island → DFS marks connected land → island count = 1
+Continue scanning → (2,2) → '1' → new island → DFS → island count = 2
+Continue scanning → (3,3) → '1' → DFS marks (3,3) & (3,4) → island count = 3
+Final Output: 3
+
+📊 Time Complexity:
+O(m × n): Each cell is visited once.
+
+🧠 Space Complexity:
+O(m × n): Worst-case recursion stack if the entire grid is land.
