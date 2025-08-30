@@ -1,0 +1,91 @@
+LeetCode Problem 133: Clone Graph
+
+Difficulty: Medium
+
+🧠 Problem Statement:
+You are given a reference to a node in a connected undirected graph.
+Return a deep copy (clone) of the graph.
+Each node contains:
+-val → the integer value of the node.
+-neighbors → list of its neighboring nodes.
+-The test case format uses an adjacency list:
+-Each list describes the set of neighbors of a node.
+-Node values are 1-indexed (node.val == index).
+-The given node will always be the first node (val = 1).
+
+✅ Example:
+Input:adjList = [[2,4],[1,3],[2,4],[1,3]]
+Output:[[2,4],[1,3],[2,4],[1,3]]
+
+✅ Approach:
+We need to clone all nodes and their connections.
+Key Insight:
+-A DFS (Depth-First Search) can explore the graph and clone each node once.
+-Use a hash map (dictionary) to store the mapping from original nodes → cloned nodes.
+-If we encounter an already visited node, just return the stored clone (to prevent cycles).
+Steps:
+-If the input node is None, return None.
+-Maintain a dictionary cloned mapping {original_node: cloned_node}.
+Perform DFS:
+-If node already cloned → return it.
+-Otherwise, create a copy of the node.
+-Recursively clone all its neighbors.
+-Return the clone of the given node.
+
+💻 Code (Python):
+# Definition for a Node.
+class Node:
+    def __init__(self, val=0, neighbors=None):
+        self.val = val
+        self.neighbors = neighbors if neighbors is not None else []
+
+from typing import Optional
+
+class Solution:
+    def cloneGraph(self, node: Optional['Node']) -> Optional['Node']:
+        if not node:
+            return None
+
+        # Dictionary to map original nodes -> cloned nodes
+        cloned = {}
+
+        def dfs(curr):
+            # If already cloned, return the copy
+            if curr in cloned:
+                return cloned[curr]
+
+            # Create a new copy of the current node
+            copy = Node(curr.val)
+            cloned[curr] = copy
+
+            # Clone all neighbors
+            for neighbor in curr.neighbors:
+                copy.neighbors.append(dfs(neighbor))
+
+            return copy
+
+        return dfs(node)
+
+🔁 Dry Run:
+
+Input Graph:
+
+1 -- 2
+|    |
+4 -- 3
+
+Adjacency List:[[2,4],[1,3],[2,4],[1,3]]
+
+Steps:
+Start at node 1. Clone 1.
+Visit neighbors 2 and 4. Clone them.
+From 2, visit 1 (already cloned) and 3. Clone 3.
+Continue until all nodes are cloned.
+
+Output:[[2,4],[1,3],[2,4],[1,3]]
+
+📊 Time Complexity:
+-O(V + E): Each node and edge visited once.
+
+🧠 Space Complexity:
+-O(V): Hash map storing cloned nodes + recursion stack.
