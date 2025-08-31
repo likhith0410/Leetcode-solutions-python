@@ -1,0 +1,115 @@
+LeetCode Problem 399: Evaluate Division
+
+Difficulty: Medium
+
+🧠 Problem Statement:
+You are given:
+An array of variable pairs equations, where each pair represents a division equation Ai / Bi = values[i].
+An array of real numbers values, where values[i] corresponds to the result of Ai / Bi.
+A list of queries, where each query is Cj / Dj, and we need to compute the result.
+If a query cannot be evaluated (because variables are not connected), return -1.0.
+You can assume:
+No division by zero.
+Input is always valid.
+Variables not in equations are undefined.
+
+✅ Example:
+Input:equations = [["a","b"],["b","c"]]  
+values = [2.0, 3.0]  
+queries = [["a","c"],["b","a"],["a","e"],["a","a"],["x","x"]]  
+
+Output:[6.00000, 0.50000, -1.00000, 1.00000, -1.00000]
+
+Explanation:
+a / c = (a / b) * (b / c) = 2.0 * 3.0 = 6.0
+b / a = 1 / (a / b) = 0.5
+a / e is undefined → -1.0
+a / a = 1.0
+x / x is undefined (since x never appears) → -1.0
+
+✅ Approach:
+We treat this as a graph problem:
+-Each variable is a node.
+-Each equation a / b = val creates two directed edges:
+-a → b (weight = val)
+-b → a (weight = 1/val)
+-To answer queries, we check if there’s a path from Cj to Dj.
+-Multiply edge weights along the path.
+-If no path exists, return -1.0.
+
+Algorithm:
+Build a graph using adjacency lists.
+For each query, run BFS (or DFS):
+-Start from numerator node.
+-Traverse until denominator node is found.
+-Accumulate product along the path.
+-Return results.
+
+💻 Code (Python):
+from collections import defaultdict, deque
+from typing import List
+
+class Solution:
+    def calcEquation(self, equations: List[List[str]], values: List[float], queries: List[List[str]]) -> List[float]:
+        # Step 1: Build graph
+        graph = defaultdict(list)  # {node: [(neighbor, weight)]}
+        
+        for (a, b), val in zip(equations, values):
+            graph[a].append((b, val))       # a -> b (weight = val)
+            graph[b].append((a, 1/val))     # b -> a (weight = 1/val)
+        
+        # Step 2: BFS to evaluate a query
+        def bfs(start, end):
+            if start not in graph or end not in graph:
+                return -1.0
+            
+            queue = deque([(start, 1.0)])  # (current_node, current_product)
+            visited = set()
+            
+            while queue:
+                node, product = queue.popleft()
+                if node == end:
+                    return product
+                
+                visited.add(node)
+                
+                for neighbor, val in graph[node]:
+                    if neighbor not in visited:
+                        queue.append((neighbor, product * val))
+            
+            return -1.0
+        
+        # Step 3: Answer all queries
+        return [bfs(a, b) for a, b in queries]
+
+🔁 Dry Run:
+
+Input:
+equations = [["a","b"],["b","c"]]  
+values = [2.0, 3.0]  
+queries = [["a","c"],["b","a"],["a","e"],["a","a"],["x","x"]]  
+
+Graph:
+
+a --2.0--> b
+b --0.5--> a
+b --3.0--> c
+c --0.333--> b
+
+Query Execution:
+a / c: Path a → b → c → 2.0 * 3.0 = 6.0
+b / a: Path b → a → 0.5
+a / e: No path → -1.0
+a / a: Trivial → 1.0
+x / x: Variable not in graph → -1.0
+
+Output:[6.0, 0.5, -1.0, 1.0, -1.0]
+
+📊 Time Complexity:
+-Building Graph: O(N) where N = len(equations)
+-Query Evaluation: Each BFS worst case visits all nodes/edges → O(V + E)
+-For Q queries → O(Q * (V + E))
+
+🧠 Space Complexity:
+-Graph storage → O(V + E)
+-BFS queue + visited set → O(V)
