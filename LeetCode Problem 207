@@ -1,0 +1,94 @@
+LeetCode Problem 207: Course Schedule
+
+Difficulty: Medium
+
+🧠 Problem Statement:
+You are given numCourses labeled 0 to numCourses-1.
+You are also given a list of prerequisites, where each pair [a, b] means:
+To take course a, you must first complete course b.
+
+👉 Task: Determine if it’s possible to finish all courses.
+Return True if possible.
+Return False if there’s a cycle (circular dependency).
+
+✅ Example:
+Input:numCourses = 2
+prerequisites = [[1,0]]
+Output:True
+
+Explanation:
+You must take course 0 before 1.
+This order is possible → finish all courses.
+
+✅ Approach:
+This is a cycle detection problem in a directed graph.
+Graph Representation:
+-Build adjacency list where b → a means b must be taken before a.
+Cycle Detection using DFS:
+-Use a visited state array:
+--0 = unvisited
+--1 = visiting (currently in recursion stack)
+--2 = fully processed
+-If we encounter a node that is already in state 1, it means we found a cycle → impossible to finish courses.
+Check All Nodes:
+-Run DFS from each unvisited course.
+-If all pass without a cycle → return True.
+
+💻 Code (Python):
+from typing import List
+
+class Solution:
+    def canFinish(self, numCourses: int, prerequisites: List[List[int]]) -> bool:
+        # Step 1: Build graph
+        graph = {i: [] for i in range(numCourses)}
+        for a, b in prerequisites:
+            graph[b].append(a)   # b → a
+
+        # Step 2: State array to detect cycles
+        visited = [0] * numCourses  # 0=unvisited, 1=visiting, 2=visited
+
+        def dfs(course):
+            if visited[course] == 1:   # cycle detected
+                return False
+            if visited[course] == 2:   # already processed safely
+                return True
+
+            visited[course] = 1  # mark as visiting
+            for nei in graph[course]:
+                if not dfs(nei):
+                    return False
+            visited[course] = 2  # mark as safe
+            return True
+
+        # Step 3: Run DFS for all courses
+        for i in range(numCourses):
+            if not dfs(i):
+                return False
+        return True
+
+🔁 Dry Run:
+
+Input:numCourses = 2
+prerequisites = [[1,0]]
+
+Graph:
+
+0 → 1
+
+Execution:
+Start DFS at course 0:
+Visit 1 → no cycle.
+Mark both as safe.
+All nodes checked → return True.
+✅ Final Output: True
+
+📊 Time Complexity:
+-Building graph: O(P) (where P = len(prerequisites))
+-DFS on all nodes: O(N + P)
+-Each node & edge visited once.
+-👉 Overall: O(N + P)
+
+🧠 Space Complexity:
+-Graph storage: O(N + P)
+-Visited array: O(N)
+-Recursion stack: O(N) in worst case (chain dependency).
