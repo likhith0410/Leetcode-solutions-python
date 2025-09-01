@@ -1,0 +1,118 @@
+LeetCode Problem 909: Snakes and Ladders
+
+Difficulty: Medium
+
+🧠 Problem Statement:
+You are given an n x n board for the classic Snakes and Ladders game.
+The board is filled with numbers in Boustrophedon order (left-to-right, then right-to-left alternately).
+You start at square 1 and want to reach square n².
+On each move, you roll a die (1–6) and move forward that many steps.
+If you land on a square with a snake or ladder (board[r][c] != -1), you must move to its destination.
+A snake/ladder is applied at most once per move.
+Return the minimum number of moves required to reach square n². If impossible, return -1.
+
+✅ Example:
+
+Input:
+board = [
+ [-1,-1,-1,-1,-1,-1],
+ [-1,-1,-1,-1,-1,-1],
+ [-1,-1,-1,-1,-1,-1],
+ [-1,35,-1,-1,13,-1],
+ [-1,-1,-1,-1,-1,-1],
+ [-1,15,-1,-1,-1,-1]
+]
+Output:4
+
+✅ Approach (BFS on Flattened Board):
+
+Observation:
+-This is a shortest path problem on a board graph.
+-Each position can go to at most 6 next positions (due to die roll).
+-BFS ensures the minimum moves are found.
+Steps:
+-Flatten the 2D board into a 1D array arr where arr[i] tells if a square has a snake/ladder (destination square).
+--Start from bottom-left → move row by row alternating direction.
+-Perform BFS starting at square 1:
+--Track (position, moves) in a queue.
+--For each dice roll (1–6), calculate next.
+--If arr[next] != -1, move to that destination.
+--Mark visited squares to avoid revisits.
+-If we reach n², return moves. Otherwise return -1.
+
+💻 Code (Python):
+from collections import deque
+from typing import List
+
+class Solution:
+    def snakesAndLadders(self, board: List[List[int]]) -> int:
+        n = len(board)
+        
+        # Step 1: Flatten board to 1D
+        arr = [-1] * (n*n + 1)
+        idx = 1
+        left_to_right = True
+        
+        for r in range(n-1, -1, -1):
+            if left_to_right:
+                for c in range(n):
+                    arr[idx] = board[r][c]
+                    idx += 1
+            else:
+                for c in range(n-1, -1, -1):
+                    arr[idx] = board[r][c]
+                    idx += 1
+            left_to_right = not left_to_right
+
+        # Step 2: BFS
+        q = deque([(1, 0)])  # (position, moves)
+        visited = set([1])
+        
+        while q:
+            pos, moves = q.popleft()
+            
+            if pos == n*n:   # Reached the end
+                return moves
+            
+            for dice in range(1, 7):
+                nxt = pos + dice
+                if nxt > n*n:
+                    continue
+                if arr[nxt] != -1:   # snake or ladder
+                    nxt = arr[nxt]
+                if nxt not in visited:
+                    visited.add(nxt)
+                    q.append((nxt, moves + 1))
+        
+        return -1
+
+🔁 Dry Run:
+
+Input:
+board = [
+ [-1,-1,-1,-1,-1,-1],
+ [-1,-1,-1,-1,-1,-1],
+ [-1,-1,-1,-1,-1,-1],
+ [-1,35,-1,-1,13,-1],
+ [-1,-1,-1,-1,-1,-1],
+ [-1,15,-1,-1,-1,-1]
+]
+
+Flattened board (arr):
+
+1 → -1, 2 → 15, 3 → -1, 4 → -1, 5 → -1, 6 → -1, ...
+8 → 35, 14 → 13, etc.
+
+Start BFS:
+Step 1: pos=1 → dice roll to {2,3,4,5,6,7} → 2 leads to ladder → 15
+Step 2: pos=15 … eventually reach 35 → shortcut
+Step 3: continue BFS … reach final square 36.
+
+✅ Minimum moves = 4
+
+📊 Time Complexity:
+-Flatten board: O(n²)
+-BFS traversal: O(n²) (each square visited once).
+
+🧠 Space Complexity:
+-O(n²) for flattened board + visited set + BFS queue.
