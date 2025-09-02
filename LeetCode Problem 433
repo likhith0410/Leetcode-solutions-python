@@ -1,0 +1,100 @@
+LeetCode Problem 433: Minimum Genetic Mutation
+
+Difficulty: Medium
+
+🧠 Problem Statement:
+You are given two 8-character gene strings:
+startGene → starting gene.
+endGene → target gene.
+A mutation is when exactly one character changes (from 'A', 'C', 'G', 'T').
+There is also a bank of valid gene strings. A mutation is valid only if the resulting gene is in the bank.
+
+Return the minimum number of mutations required to change startGene → endGene.
+If no valid transformation exists, return -1.
+
+✅ Example:
+
+Input:
+startGene = "AACCGGTT"
+endGene   = "AACCGGTA"
+bank      = ["AACCGGTA"]
+
+Output:1
+
+Explanation:
+One mutation "AACCGGTT" → "AACCGGTA" completes the transformation.
+
+✅ Approach (BFS – Shortest Path in Mutation Graph):
+Observation:
+-Each gene string can be thought of as a node in a graph.
+-An edge exists between two nodes if they differ by exactly 1 character.
+-We need the shortest path from startGene → endGene → Use BFS.
+Steps:
+-Store the bank in a set for O(1) lookups.
+-If endGene is not in bank, return -1 immediately.
+-Use a queue for BFS traversal: (gene, steps).
+-For each gene:
+--Try mutating each character with {A,C,G,T}.
+--If the new gene is in bank and not visited → push into queue.
+-If we reach endGene, return steps.
+-If BFS ends without finding endGene, return -1.
+
+💻 Code (Python):
+from collections import deque
+from typing import List
+
+class Solution:
+    def minMutation(self, startGene: str, endGene: str, bank: List[str]) -> int:
+        bank_set = set(bank)  # For O(1) lookups
+        if endGene not in bank_set:
+            return -1  # Can't reach if endGene not in bank
+
+        # Characters available for mutation
+        genes = ['A', 'C', 'G', 'T']
+        
+        # BFS setup
+        queue = deque([(startGene, 0)])  # (gene, mutation count)
+        visited = set([startGene])
+
+        while queue:
+            gene, steps = queue.popleft()
+            if gene == endGene:
+                return steps
+
+            # Try all possible mutations
+            for i in range(len(gene)):
+                for g in genes:
+                    if g != gene[i]:  # Only change character
+                        mutated = gene[:i] + g + gene[i+1:]
+                        if mutated in bank_set and mutated not in visited:
+                            visited.add(mutated)
+                            queue.append((mutated, steps + 1))
+
+        return -1
+
+🔁 Dry Run:
+
+Input:
+
+startGene = "AACCGGTT"
+endGene   = "AAACGGTA"
+bank      = ["AACCGGTA","AACCGCTA","AAACGGTA"]
+
+Start = "AACCGGTT", steps = 0.
+Possible mutations → "AACCGGTA" (valid, in bank).
+
+Next = "AACCGGTA", steps = 1.
+Possible mutations → "AAACGGTA" (valid, in bank).
+
+Next = "AAACGGTA", steps = 2 → matches endGene.
+
+✅ Output = 2
+
+📊 Time Complexity:
+-Each gene has length = 8.
+-For each gene, try 8 × 3 = 24 possible mutations.
+-At most process len(bank) genes.
+-O(N × 24) ≈ O(N) where N = len(bank).
+
+🧠 Space Complexity:
+-O(N) for visited set and queue.
