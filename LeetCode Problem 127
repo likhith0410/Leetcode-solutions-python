@@ -1,0 +1,105 @@
+LeetCode Problem 127: Word Ladder
+
+Difficulty: Hard
+
+🧠 Problem Statement:
+We are given two words:
+beginWord → starting word.
+endWord → target word.
+And a dictionary wordList.
+A valid transformation sequence must:
+Change only one letter at a time.
+Every intermediate word must exist in wordList.
+End at endWord.
+
+Return the length of the shortest transformation sequence (number of words).
+If no such sequence exists, return 0.
+
+✅ Example:
+
+Input:
+beginWord = "hit"
+endWord   = "cog"
+wordList  = ["hot","dot","dog","lot","log","cog"]
+
+Output:5
+
+Explanation:
+One shortest sequence is:
+"hit" → "hot" → "dot" → "dog" → "cog" → length = 5
+
+✅ Approach (BFS – Shortest Path in Word Graph):
+Observation:
+-Each word is a node.
+-There’s an edge between two words if they differ by exactly 1 character.
+-We want the shortest path from beginWord → endWord.
+-Use BFS to guarantee shortest transformation.
+Steps:
+-Store wordList in a set for O(1) lookups.
+-If endWord not in the set → no transformation possible → return 0.
+-Initialize BFS queue: (beginWord, 1) where 1 = step count.
+-For each word, generate all possible 1-letter mutations.
+-If mutation exists in wordList and not visited → push into queue.
+-If endWord is reached → return step count.
+-If BFS ends without reaching endWord → return 0.
+
+💻 Code (Python):
+from collections import deque
+from typing import List
+
+class Solution:
+    def ladderLength(self, beginWord: str, endWord: str, wordList: List[str]) -> int:
+        word_set = set(wordList)
+        if endWord not in word_set:
+            return 0  # No valid path
+
+        queue = deque([(beginWord, 1)])  # (word, steps)
+        visited = set([beginWord])
+
+        while queue:
+            word, steps = queue.popleft()
+
+            if word == endWord:
+                return steps
+
+            # Try changing each letter
+            for i in range(len(word)):
+                for c in "abcdefghijklmnopqrstuvwxyz":
+                    if c != word[i]:
+                        new_word = word[:i] + c + word[i+1:]
+                        if new_word in word_set and new_word not in visited:
+                            visited.add(new_word)
+                            queue.append((new_word, steps + 1))
+
+        return 0
+
+🔁 Dry Run:
+
+Input:
+
+beginWord = "hit"
+endWord   = "cog"
+wordList  = ["hot","dot","dog","lot","log","cog"]
+
+Start = "hit", steps = 1.
+Mutations: "hot" (valid, push to queue).
+
+"hot", steps = 2.
+Mutations: "dot", "lot" (valid).
+
+"dot", steps = 3.
+Mutations: "dog" (valid).
+
+"dog", steps = 4.
+Mutations: "cog" (valid, target found).
+
+✅ Output = 5
+
+📊 Time Complexity:
+-Each word has length L.
+-For each word, we try L × 25 possible mutations.
+-With N = len(wordList), worst-case BFS explores all words.
+-O(N × L × 26)
+
+🧠 Space Complexity:
+-O(N) for visited set and queue.
