@@ -1,0 +1,90 @@
+LeetCode Problem 208: Implement Trie (Prefix Tree)
+
+Difficulty: Medium
+
+🧠 Problem Statement:
+A trie (prefix tree) is a special tree data structure used to store and search strings efficiently.
+You need to implement the following operations:
+Trie() → Initializes the trie.
+insert(word) → Inserts a word into the trie.
+search(word) → Returns true if the word exists in the trie, otherwise false.
+startsWith(prefix) → Returns true if any word starts with the given prefix.
+
+👉 Example:
+Input:
+["Trie","insert","search","search","startsWith","insert","search"]
+[[],["apple"],["apple"],["app"],["app"],["app"],["app"]]
+
+Output:[null,null,true,false,true,null,true]
+
+✅ Approach:
+Use a TrieNode class:
+-children: dictionary to store character → TrieNode mapping.
+-is_end: boolean flag to mark the end of a word.
+-Insert: Traverse character by character. Create new nodes if missing. Mark last node as is_end=True.
+-Search: Traverse word character by character. Return True only if is_end=True.
+-startsWith: Traverse prefix characters. Return True if all nodes exist.
+
+class TrieNode:
+    def __init__(self):
+        self.children = {}   # map char → TrieNode
+        self.is_end = False  # marks end of a word
+
+
+class Trie:
+
+    def __init__(self):
+        self.root = TrieNode()
+
+    def insert(self, word: str) -> None:
+        node = self.root
+        for ch in word:
+            if ch not in node.children:
+                node.children[ch] = TrieNode()
+            node = node.children[ch]
+        node.is_end = True
+
+    def search(self, word: str) -> bool:
+        node = self.root
+        for ch in word:
+            if ch not in node.children:
+                return False
+            node = node.children[ch]
+        return node.is_end
+
+    def startsWith(self, prefix: str) -> bool:
+        node = self.root
+        for ch in prefix:
+            if ch not in node.children:
+                return False
+            node = node.children[ch]
+        return True
+
+
+🔁 Dry Run:
+
+Input:
+
+obj = Trie()
+obj.insert("apple")
+obj.search("apple")   → True
+obj.search("app")     → False
+obj.startsWith("app") → True
+obj.insert("app")
+obj.search("app")     → True
+
+Step by Step:
+Insert "apple" → nodes created for a → p → p → l → e.
+Search "apple" → found, and last node is_end=True.
+Search "app" → found nodes, but is_end=False.
+startsWith "app" → prefix exists → True.
+Insert "app" → mark node at 2nd p as is_end=True.
+Search "app" again → True.
+
+📊 Time Complexity:
+-Insert: O(m), where m = length of word.
+-Search: O(m).
+-startsWith: O(m).
+
+🧠 Space Complexity:
+-Worst case: O(N × M) where N = number of words, M = average length of word.
