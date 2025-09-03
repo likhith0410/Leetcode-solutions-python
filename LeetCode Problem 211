@@ -1,0 +1,96 @@
+LeetCode Problem 211: Design Add and Search Words Data Structure
+
+Difficulty: Medium
+
+🧠 Problem Statement:
+You need to design a data structure to store words and allow searches with support for a special character:
+WordDictionary() → Initializes the object.
+addWord(word) → Adds the word to the data structure.
+search(word) → Returns true if the word matches any previously added word.
+word may contain the wildcard character "." which can match any single letter.
+
+👉 Example:
+Input:
+
+["WordDictionary","addWord","addWord","addWord","search","search","search","search"]
+[[],["bad"],["dad"],["mad"],["pad"],["bad"],[".ad"],["b.."]]
+
+Output:[null,null,null,null,false,true,true,true]
+
+
+✅ Approach:
+Use a TrieNode structure:
+-children: dictionary mapping char → TrieNode.
+-is_end: marks if a word ends here.
+addWord: Insert character by character into the trie. Mark last node as is_end=True.
+search: Use DFS to handle two cases:
+-If current character is a letter → move to the corresponding child.
+-If current character is "." → recursively try all children.
+Return True if traversal reaches the end and is_end=True.
+
+class TrieNode:
+    def __init__(self):
+        self.children = {}   # char → TrieNode
+        self.is_end = False
+
+class WordDictionary:
+
+    def __init__(self):
+        self.root = TrieNode()
+
+    def addWord(self, word: str) -> None:
+        node = self.root
+        for ch in word:
+            if ch not in node.children:
+                node.children[ch] = TrieNode()
+            node = node.children[ch]
+        node.is_end = True
+
+    def search(self, word: str) -> bool:
+        def dfs(node, i):
+            # Base case: reached end of word
+            if i == len(word):
+                return node.is_end
+
+            ch = word[i]
+            if ch == ".":
+                # Try all possible children
+                for child in node.children.values():
+                    if dfs(child, i + 1):
+                        return True
+                return False
+            else:
+                if ch not in node.children:
+                    return False
+                return dfs(node.children[ch], i + 1)
+
+        return dfs(self.root, 0)
+
+
+🔁 Dry Run:
+
+Input:
+
+obj = WordDictionary()
+obj.addWord("bad")
+obj.addWord("dad")
+obj.addWord("mad")
+obj.search("pad")  → False
+obj.search("bad")  → True
+obj.search(".ad")  → True
+obj.search("b..")  → True
+
+Step by Step:
+
+Insert "bad", "dad", "mad" → trie stores them.
+Search "pad" → not found → False.
+Search "bad" → exact match → True.
+Search ".ad" → . matches b, d, or m. Found "bad" → True.
+Search "b.." → b fixed, .. match a + d → "bad" found → True.
+
+📊 Time Complexity:
+-addWord: O(m), where m = length of word.
+-search: Worst case O(26^m) if all chars are ".", but typically O(m) for normal words.
+
+🧠 Space Complexity:
+-Worst case: O(N × M) for N words of average length M.
