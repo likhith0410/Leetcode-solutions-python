@@ -1,0 +1,71 @@
+LeetCode Problem 17: Letter Combinations of a Phone Number
+
+Difficulty: Medium
+
+🧠 Problem Statement:
+Given a string of digits from 2–9, return all possible letter combinations the digits could represent (based on a phone keypad).
+Digits map to letters (like on old phones).
+1 has no letters.
+The answer can be returned in any order.
+
+👉 Example:
+
+Input:digits = "23"
+Output:["ad","ae","af","bd","be","bf","cd","ce","cf"]
+
+✅ Approach:
+
+Mapping digits to letters:
+-lUse a dictionary:
+--2 → "abc", 3 → "def", ..., 9 → "wxyz".
+Backtracking:
+-Build combinations recursively.
+-At each step, pick one letter from the current digit and move to the next digit.
+-When all digits are used, save the combination.
+Edge Case:
+-If digits is empty → return [].
+
+class Solution:
+    def letterCombinations(self, digits: str) -> List[str]:
+        if not digits:
+            return []
+
+        phone = {
+            "2": "abc", "3": "def", "4": "ghi", "5": "jkl",
+            "6": "mno", "7": "pqrs", "8": "tuv", "9": "wxyz"
+        }
+
+        result = []
+
+        def backtrack(index, path):
+            if index == len(digits):   # base case
+                result.append("".join(path))
+                return
+
+            for ch in phone[digits[index]]:
+                path.append(ch)
+                backtrack(index + 1, path)
+                path.pop()  # undo choice
+
+        backtrack(0, [])
+        return result
+
+
+🔁 Dry Run:
+
+Input: digits = "23"
+Step 1: Start with "2" → letters "abc".
+Pick "a", then move to "3" → "def".
+"ad", "ae", "af"
+Backtrack, pick "b" → "bd", "be", "bf"
+Backtrack, pick "c" → "cd", "ce", "cf"
+
+✅ Final Output:["ad","ae","af","bd","be","bf","cd","ce","cf"]
+
+📊 Time Complexity:
+-Each digit maps to up to 4 letters.
+-If there are n digits, worst case = O(4^n × n) (n for building string).
+
+🧠 Space Complexity:
+-Recursion stack = O(n).
+-Result list stores up to 4^n combinations.
