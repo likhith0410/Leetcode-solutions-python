@@ -1,0 +1,125 @@
+LeetCode Problem 212: Word Search II
+
+Difficulty: Hard
+
+🧠 Problem Statement:
+You are given:
+A board of characters (m x n).
+A list of words.
+You need to return all words from the list that can be constructed on the board, where:
+Words are formed by sequentially adjacent cells (up, down, left, right).
+A cell may not be reused in the same word.
+
+👉 Example:
+Input:
+
+board = [
+  ["o","a","a","n"],
+  ["e","t","a","e"],
+  ["i","h","k","r"],
+  ["i","f","l","v"]
+]
+words = ["oath","pea","eat","rain"]
+
+Output:["eat","oath"]
+
+
+✅ Approach:
+Use a Trie:
+-Insert all words into a Trie.
+-Each node has:
+--children: dictionary for next characters.
+--word: marks the word ending at this node.
+DFS Search on the Board:
+-From each cell, explore neighbors recursively.
+-If the current character doesn’t exist in the Trie → backtrack.
+-If we reach a node with word != None, we found a word → add to result and set word=None (avoid duplicates).
+Backtracking with Pruning:
+-Mark visited cells as "#" temporarily.
+-Restore them after DFS.
+-If a Trie node becomes empty, prune it to speed up search.
+
+from typing import List
+
+class TrieNode:
+    def __init__(self):
+        self.children = {}
+        self.word = None  # store word when ending here
+
+
+class Solution:
+    def findWords(self, board: List[List[str]], words: List[str]) -> List[str]:
+        # Step 1: Build Trie
+        root = TrieNode()
+        for w in words:
+            node = root
+            for ch in w:
+                if ch not in node.children:
+                    node.children[ch] = TrieNode()
+                node = node.children[ch]
+            node.word = w  # mark end of word
+
+        m, n = len(board), len(board[0])
+        result = []
+
+        # Step 2: DFS search
+        def dfs(i, j, node):
+            ch = board[i][j]
+            if ch not in node.children:
+                return
+
+            nxt = node.children[ch]
+            if nxt.word:  # found a word
+                result.append(nxt.word)
+                nxt.word = None  # avoid duplicates
+
+            # mark visited
+            board[i][j] = "#"
+            for dx, dy in [(1,0), (-1,0), (0,1), (0,-1)]:
+                ni, nj = i + dx, j + dy
+                if 0 <= ni < m and 0 <= nj < n and board[ni][nj] != "#":
+                    dfs(ni, nj, nxt)
+            board[i][j] = ch  # restore
+
+            # optimization: prune leaf nodes
+            if not nxt.children:
+                node.children.pop(ch)
+
+        # Step 3: Start DFS from each cell
+        for i in range(m):
+            for j in range(n):
+                dfs(i, j, root)
+
+        return result
+
+
+🔁 Dry Run:
+
+Input:
+
+board = [
+  ["o","a","a","n"],
+  ["e","t","a","e"],
+  ["i","h","k","r"],
+  ["i","f","l","v"]
+]
+words = ["oath","pea","eat","rain"]
+
+Step by Step:
+Trie built with "oath", "pea", "eat", "rain".
+DFS from (0,0) "o" → "oa" → "oat" → "oath" → found "oath".
+DFS from (1,1) "t" path leads to "eat" → found "eat".
+"pea" not found.
+"rain" not found.
+
+✅ Final Output:["eat","oath"]
+
+📊 Time Complexity:
+
+-Building Trie: O(W × L) where W = number of words, L = avg length.
+-DFS search: Worst-case O(M × N × 4^L) where M×N = board size.
+-Pruning helps reduce unnecessary paths significantly.
+
+🧠 Space Complexity:
+-Trie: O(W × L).
+-DFS recursion stack: O(L).
