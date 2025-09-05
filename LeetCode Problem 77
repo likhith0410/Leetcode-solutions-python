@@ -1,0 +1,72 @@
+LeetCode Problem 77: Combinations
+
+Difficulty: Medium
+
+🧠 Problem Statement:
+Given two integers n and k, return all possible combinations of k numbers chosen from the range [1, n].
+You may return the answer in any order.
+
+Example 1:
+Input:n = 4, k = 2
+Output:[[1,2],[1,3],[1,4],[2,3],[2,4],[3,4]]
+
+Explanation:
+There are 4 choose 2 = 6 total combinations.
+Combinations are unordered, so [1,2] and [2,1] are considered the same.
+
+✅ Approach:
+We use backtracking to explore all possible combinations:
+Recursive Function (backtrack):
+-Keep track of the current path (combination being built).
+-Start picking numbers from start to n.
+Base Case:
+-If the length of path equals k, add a copy to result.
+Recursive Step:
+-For each number, include it in path, recurse to the next, and then backtrack (undo choice).
+
+Solution Code:
+class Solution:
+    def combine(self, n: int, k: int) -> List[List[int]]:
+        result = []
+
+        def backtrack(start, path):
+            # Base case: when path has k numbers
+            if len(path) == k:
+                result.append(path[:])
+                return
+
+            # Recursive case: choose numbers from start to n
+            for num in range(start, n + 1):
+                path.append(num)          # choose
+                backtrack(num + 1, path) # explore further
+                path.pop()               # undo choice
+
+        backtrack(1, [])
+        return result
+
+
+🔁 Dry Run:
+Input: n = 4, k = 2
+Start with 1:
+Path [1] → pick 2 → [1,2] ✅
+Path [1] → pick 3 → [1,3] ✅
+Path [1] → pick 4 → [1,4] ✅
+
+Start with 2:
+Path [2] → pick 3 → [2,3] ✅
+Path [2] → pick 4 → [2,4] ✅
+
+Start with 3:
+Path [3] → pick 4 → [3,4] ✅
+
+Final Output:[[1,2],[1,3],[1,4],[2,3],[2,4],[3,4]]
+
+
+📊 Time Complexity:
+-O(C(n, k) * k)
+-We generate all n choose k combinations.
+-Each combination takes O(k) to copy.
+
+🧠 Space Complexity:
+-O(k) for recursion stack (max depth = k).
+-O(C(n, k)) to store results.
