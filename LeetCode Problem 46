@@ -1,0 +1,79 @@
+LeetCode Problem 46: Permutations
+
+Difficulty: Medium
+
+🧠 Problem Statement:
+Given an array nums of distinct integers, return all the possible permutations.
+You can return the answer in any order.
+
+Example 1:
+Input:nums = [1,2,3]
+Output:[[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]]
+
+✅ Approach:
+We use backtracking to generate all permutations:
+-Path: Keeps the current permutation.
+-Base Case: If path has the same length as nums, add it to results.
+-Recursive Step: Try each number not yet used:
+--Mark it as used, add to path, recurse.
+--Backtrack by unmarking and removing from path.
+
+Solution Code:
+class Solution:
+    def permute(self, nums: List[int]) -> List[List[int]]:
+        res = []
+        path = []
+
+        def backtrack(used):
+            # Base case: permutation complete
+            if len(path) == len(nums):
+                res.append(path[:])   # copy current path
+                return
+            
+            # Try each number
+            for i in range(len(nums)):
+                if used[i]:  # already taken
+                    continue
+                
+                # Choose
+                path.append(nums[i])
+                used[i] = True
+
+                # Explore
+                backtrack(used)
+
+                # Un-choose (backtrack)
+                path.pop()
+                used[i] = False
+
+        backtrack([False] * len(nums))
+        return res
+
+
+🔁 Dry Run:
+Input: nums = [1,2,3]
+
+Pick 1:
+Path [1] → pick 2 → [1,2] → pick 3 → [1,2,3] ✅
+Path [1] → pick 3 → [1,3] → pick 2 → [1,3,2] ✅
+
+Pick 2:
+Path [2] → pick 1 → [2,1] → pick 3 → [2,1,3] ✅
+Path [2] → pick 3 → [2,3] → pick 1 → [2,3,1] ✅
+
+Pick 3:
+Path [3] → pick 1 → [3,1] → pick 2 → [3,1,2] ✅
+Path [3] → pick 2 → [3,2] → pick 1 → [3,2,1] ✅
+
+Final Output:
+[[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]]
+
+
+📊 Time Complexity:
+-O(n × n!)
+-There are n! permutations.
+-Each permutation takes O(n) to build.
+
+🧠 Space Complexity:
+-O(n) recursion depth.
+-O(n!) to store results.
