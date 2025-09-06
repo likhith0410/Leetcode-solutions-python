@@ -1,0 +1,84 @@
+LeetCode Problem 52: N-Queens II
+
+Difficulty: Hard
+
+🧠 Problem Statement:
+We need to place n queens on an n × n chessboard such that no two queens attack each other.
+Queens attack along the same row, column, and both diagonals.
+Return the number of distinct solutions possible.
+
+Example 1:
+Input:n = 4
+Output:2
+
+Explanation:
+-There are 2 distinct valid configurations for 4 queens (like in the classic 4-queens puzzle).
+
+✅ Approach: (Backtracking)
+We place queens row by row:
+Constraints to track:
+-cols: Columns already occupied by queens.
+-diag1: Occupied diagonals row - col.
+-diag2: Occupied diagonals row + col.
+
+Recursive function:
+-If row == n → all queens placed → increment solution count.
+-Else, try placing queen in each column of current row:
+-Skip if column or diagonals are already occupied.
+-Otherwise, place queen, recurse to next row, then backtrack.
+
+Backtracking:
+-Add queen → recurse → remove queen.
+
+Solution Code:
+class Solution:
+    def totalNQueens(self, n: int) -> int:
+        cols = set()
+        diag1 = set()  # row - col
+        diag2 = set()  # row + col
+        count = 0
+
+        def backtrack(row):
+            nonlocal count
+            if row == n:
+                count += 1
+                return
+
+            for col in range(n):
+                if col in cols or (row - col) in diag1 or (row + col) in diag2:
+                    continue  # conflict, skip
+
+                # place queen
+                cols.add(col)
+                diag1.add(row - col)
+                diag2.add(row + col)
+
+                backtrack(row + 1)
+
+                # remove queen (backtrack)
+                cols.remove(col)
+                diag1.remove(row - col)
+                diag2.remove(row + col)
+
+        backtrack(0)
+        return count
+
+🔁 Dry Run:
+Input: n = 4
+Start at row 0:
+Try col 0 → place queen (0,0).
+Next row 1: col 0 ❌, col 1 ❌ (same diagonal), col 2 → place (1,2).
+Row 2: col 0 ❌, col 1 → place (2,1).
+Row 3: col 3 → place (3,3). ✅ valid solution (count = 1).
+Backtrack.
+
+Try other options… eventually find second valid config: (0,1), (1,3), (2,0), (3,2). ✅
+✅ Final Output: 2
+
+📊 Time Complexity:
+-Worst-case O(n!) because each row tries multiple column placements.
+-More optimized than brute force since conflicts are skipped early.
+
+🧠 Space Complexity:
+-O(n) for recursion depth.
+-O(n) for cols, diag1, diag2 sets.
