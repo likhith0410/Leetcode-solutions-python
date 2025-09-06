@@ -1,0 +1,93 @@
+LeetCode Problem 39: Combination Sum
+
+Difficulty: Medium
+
+🧠 Problem Statement:
+Given an array of distinct integers candidates and a target integer target, return a list of all unique combinations of candidates where the chosen numbers sum to target.
+A number can be used unlimited times.
+Two combinations are unique if they differ in frequency of at least one element.
+
+Example 1:
+Input:candidates = [2,3,6,7], target = 7
+Output:[[2,2,3],[7]]
+
+Explanation:
+
+2 + 2 + 3 = 7 ✅
+7 = 7 ✅
+
+✅ Approach:
+We use backtracking to explore all possible combinations:
+-Path: Keeps the current combination.
+-Total: Tracks the current sum.
+-Base Case 1: If total == target → valid combination, add to result.
+-Base Case 2: If total > target → overshoot, stop.
+-Recursive Step: For each candidate starting at start:
+--Add candidate to path.
+--Recurse with same index (i) since reuse is allowed.
+--Backtrack (remove last choice).
+
+Solution Code:
+class Solution:
+    def combinationSum(self, candidates: List[int], target: int) -> List[List[int]]:
+        res = []
+
+        def backtrack(start, path, total):
+            # Base case: valid combination found
+            if total == target:
+                res.append(path[:])
+                return
+            if total > target:
+                return  # overshoot
+
+            # Explore choices
+            for i in range(start, len(candidates)):
+                path.append(candidates[i])                 # choose
+                backtrack(i, path, total + candidates[i])  # reuse same number
+                path.pop()                                # undo choice
+
+        backtrack(0, [], 0)
+        return res
+
+
+🔁 Dry Run:
+Input: candidates = [2,3,6,7], target = 7
+Pick 2: path [2] → total = 2
+Pick 2: path [2,2] → total = 4
+Pick 2: path [2,2,2] → total = 6
+Pick 2: path [2,2,2,2] → total = 8 ❌ overshoot
+Pick 3: path [2,2,2,3] → total = 9 ❌ overshoot
+Pick 6: overshoot
+Pick 7: overshoot
+Pick 3: path [2,2,3] → total = 7 ✅ valid
+Pick 3: path [2,3] → total = 5
+Pick 3: path [2,3,3] → total = 8 ❌ overshoot
+Pick 6: overshoot
+Pick 7: overshoot
+Pick 6: path [2,6] → total = 8 ❌ overshoot
+Pick 7: path [2,7] → total = 9 ❌ overshoot
+Pick 3: path [3] → total = 3
+Pick 3: path [3,3] → total = 6
+Pick 3: path [3,3,3] → total = 9 ❌ overshoot
+Pick 6: overshoot
+Pick 7: overshoot
+Pick 6: path [6] → total = 6
+Pick 6: path [6,6] → total = 12 ❌ overshoot
+Pick 7: overshoot
+Pick 7: path [7] → total = 7 ✅ valid
+
+✅ Final Output:
+
+[[2,2,3],[7]]
+
+
+📊 Time Complexity:
+-O(N^(T/M))
+-N = number of candidates
+-T = target
+-M = smallest candidate
+(Because in worst case, we keep adding the smallest candidate until reaching/exceeding target.)
+
+🧠 Space Complexity:
+-O(T/M) recursion depth (max path length).
+-Extra O(k) per valid combination stored.
