@@ -1,0 +1,92 @@
+LeetCode Problem 79: Word Search
+
+Difficulty: Medium
+
+🧠 Problem Statement:
+You are given an m x n grid of characters (board) and a string (word).
+Return true if the word exists in the grid.
+
+👉 Rules:
+The word can be formed by sequentially adjacent cells (up, down, left, right).
+The same cell cannot be reused in a single word path.
+
+Example:
+Input:
+board = [["A","B","C","E"],
+         ["S","F","C","S"],
+         ["A","D","E","E"]]
+word = "ABCCED"
+
+Output:True
+
+✅ Approach: Backtracking (DFS Search)
+
+-Loop through each cell in the grid.
+-If the character matches the first letter of word, start a DFS.
+-DFS (backtrack):
+--Base Case 1: If all letters are matched → return True.
+--Base Case 2: If out of bounds OR mismatch → return False.
+--Temporarily mark the current cell as visited ("#").
+--Explore 4 directions: up, down, left, right.
+--Restore the original character when backtracking.
+-If any DFS returns True, the word exists.
+
+class Solution:
+    def exist(self, board: List[List[str]], word: str) -> bool:
+        rows, cols = len(board), len(board[0])
+
+        def backtrack(r, c, i):
+            # Base Case: all chars matched
+            if i == len(word):
+                return True
+            # Out of bounds OR mismatch
+            if r < 0 or r >= rows or c < 0 or c >= cols or board[r][c] != word[i]:
+                return False
+
+            # Mark cell visited
+            temp = board[r][c]
+            board[r][c] = "#"
+
+            # Explore 4 directions
+            found = (
+                backtrack(r + 1, c, i + 1) or
+                backtrack(r - 1, c, i + 1) or
+                backtrack(r, c + 1, i + 1) or
+                backtrack(r, c - 1, i + 1)
+            )
+
+            # Restore cell (backtrack)
+            board[r][c] = temp
+            return found
+
+        # Try starting DFS from every cell
+        for r in range(rows):
+            for c in range(cols):
+                if backtrack(r, c, 0):
+                    return True
+
+        return False
+
+
+🔁 Dry Run:
+Input:
+
+board = [["A","B","C","E"],
+         ["S","F","C","S"],
+         ["A","D","E","E"]],
+word = "ABCCED"
+
+Steps:
+Start at (0,0) = "A" → matches first letter.
+DFS path: A → B → C → C → E → D → ✅ word found.
+
+Final Output: True
+
+📊 Time Complexity:
+-Worst case: Visit each cell and explore 4 directions recursively.
+-O(m * n * 4^L)
+-m * n = grid size.
+-L = length of word.
+
+🧠 Space Complexity:
+-O(L) → recursion stack (max depth = length of word).
