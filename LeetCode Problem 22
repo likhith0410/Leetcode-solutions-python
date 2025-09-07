@@ -1,0 +1,71 @@
+LeetCode Problem 22: Generate Parentheses
+
+Difficulty: Medium
+
+🧠 Problem Statement:
+Given n pairs of parentheses, generate all possible well-formed parentheses strings.
+A well-formed string must always close properly.
+For each prefix, the number of ( must be ≥ number of ).
+
+Example 1:
+Input:n = 3
+Output:["((()))","(()())","(())()","()(())","()()()"]
+
+✅ Approach: (Backtracking)
+We build the string step by step while following rules:
+Track two counters:
+-open_count: number of ( used.
+-close_count: number of ) used.
+Rules for adding parentheses:
+-Add ( if open_count < n.
+-Add ) if close_count < open_count (only if there are unmatched ().
+Base case:
+-When length of curr = 2 * n, we found a valid string → add to result.
+
+Solution Code:
+class Solution:
+    def generateParenthesis(self, n: int) -> List[str]:
+        res = []
+
+        def backtrack(curr, open_count, close_count):
+            # Base case: valid string built
+            if len(curr) == 2 * n:
+                res.append(curr)
+                return
+
+            # Add '(' if possible
+            if open_count < n:
+                backtrack(curr + "(", open_count + 1, close_count)
+
+            # Add ')' if possible
+            if close_count < open_count:
+                backtrack(curr + ")", open_count, close_count + 1)
+
+        backtrack("", 0, 0)
+        return res
+
+
+🔁 Dry Run:
+Input: n = 3
+
+Start: "" (0,0)
+Add ( → "(" (1,0)
+Add ( → "((" (2,0)
+Add ( → "(((" (3,0)
+Add ) → "((()" (3,1)
+Add ) → "((())" (3,2)
+Add ) → "((()))" (3,3) ✅ valid string
+Similarly, other paths generate: "(()())", "(())()", "()(())", "()()()".
+
+✅ Final Output: ["((()))","(()())","(())()","()(())","()()()"]
+
+📊 Time Complexity:
+
+-Each position has 2 choices → O(2^(2n)) worst-case.
+-But pruning ensures only valid strings → total Catalan number C(n) solutions.
+-Approx: O(4^n / sqrt(n)).
+
+🧠 Space Complexity:
+
+-O(n) recursion depth.
+-O(C(n) * n) for storing results.
