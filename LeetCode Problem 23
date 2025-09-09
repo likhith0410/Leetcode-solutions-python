@@ -1,0 +1,118 @@
+LeetCode Problem 23: Merge k Sorted Lists
+
+Difficulty: Hard
+
+🧠 Problem Statement:
+We are given an array of k sorted linked lists.
+We need to merge them all into a single sorted linked list and return its head.
+
+Example:
+Input:lists = [[1,4,5],[1,3,4],[2,6]]
+
+Explanation:
+Linked lists:
+
+1 → 4 → 5  
+1 → 3 → 4  
+2 → 6  
+
+Merge them together into one sorted list:
+1 → 1 → 2 → 3 → 4 → 4 → 5 → 6
+
+Output:[1,1,2,3,4,4,5,6]
+
+✅ Approach (Divide and Conquer):
+Helper Function mergeTwo(l1, l2):
+-Merge two sorted linked lists into one (like the "Merge" step in merge sort).
+Iterative Pair Merging:
+-While more than one list remains:
+--Merge lists in pairs (lists[0] with lists[1], etc.).
+--Store merged results in a new list.
+-Repeat until only one list remains.
+Return the single merged list.
+This avoids flattening all values into an array and sorting, making it more efficient.
+
+📝 Code 1:
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+
+class Solution:
+    def mergeKLists(self, lists: List[Optional[ListNode]]) -> Optional[ListNode]:
+        if not lists:
+            return None
+        
+        def mergeTwo(l1, l2):
+            dummy = ListNode(0)
+            tail = dummy
+            while l1 and l2:
+                if l1.val < l2.val:
+                    tail.next, l1 = l1, l1.next
+                else:
+                    tail.next, l2 = l2, l2.next
+                tail = tail.next
+            tail.next = l1 or l2
+            return dummy.next
+        
+        # Keep merging in pairs until one list remains
+        while len(lists) > 1:
+            newLists = []
+            for i in range(0, len(lists), 2):
+                l1 = lists[i]
+                l2 = lists[i+1] if i + 1 < len(lists) else None
+                newLists.append(mergeTwo(l1, l2))
+            lists = newLists
+        
+        return lists[0]
+
+
+
+Code 2:
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+import heapq
+
+class Solution:
+    def mergeKLists(self, lists: List[Optional[ListNode]]) -> Optional[ListNode]:
+        heap = []
+        # Push head of each list into heap
+        for i, node in enumerate(lists):
+            if node:
+                heapq.heappush(heap, (node.val, i, node))
+        
+        dummy = ListNode(0)
+        curr = dummy
+
+        while heap:
+            val, i, node = heapq.heappop(heap)
+            curr.next = node
+            curr = curr.next
+            if node.next:
+                heapq.heappush(heap, (node.next.val, i, node.next))
+        
+        return dummy.next
+
+        
+
+
+🔁 Dry Run:
+
+Input:lists = [[1,4,5], [1,3,4], [2,6]]
+Step 1: Merge [1,4,5] and [1,3,4] → [1,1,3,4,4,5]
+Step 2: Merge result with [2,6] → [1,1,2,3,4,4,5,6]
+
+✅ Final Output:[1,1,2,3,4,4,5,6]
+
+📊 Time Complexity:
+-Merging 2 lists of total length n = O(n).
+-With divide & conquer, we merge in log k rounds.
+-Total = O(N log k), where N = total number of nodes across all lists.
+
+🧠 Space Complexity:
+-Only uses a few pointers (dummy, tail) → O(1) extra space.
+-Recursion not used, so no stack overhead.
