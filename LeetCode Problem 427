@@ -1,0 +1,96 @@
+LeetCode Problem 427: Construct Quad Tree
+
+Difficulty: Medium
+
+🧠 Problem Statement:
+We are given an n × n matrix grid of only 0s and 1s.
+We need to represent the grid using a Quad-Tree.
+
+👉 Quad-Tree rules:
+Each internal node has 4 children: topLeft, topRight, bottomLeft, bottomRight.
+Each node has two attributes:
+val: True if the region represents all 1s, False if all 0s.
+isLeaf: True if the node is a leaf (cannot be divided further).
+If a region is uniform (all 0s or all 1s), we make it a leaf node. Otherwise, we split into 4 sub-quadrants and build recursively.
+
+Example:
+Input:
+grid = [[0,1],
+        [1,0]]
+
+Output (Quad Tree in array form):
+[[0,1],[1,0],[1,1],[1,1],[1,0]]
+
+
+✅ Approach (Recursive Divide & Conquer):
+
+Base Case:
+-If the region has size 1 → return a leaf node (isLeaf=True, val=grid[x][y]).
+Divide into 4 quadrants:
+-topLeft
+-topRight
+-bottomLeft
+-bottomRight
+Check if all quadrants are leaves with same value:
+-If yes → merge into a single leaf node.
+-Else → return an internal node with children.
+
+📝 Code
+# Definition for a QuadTree node.
+class Node:
+    def __init__(self, val, isLeaf, topLeft, topRight, bottomLeft, bottomRight):
+        self.val = val
+        self.isLeaf = isLeaf
+        self.topLeft = topLeft
+        self.topRight = topRight
+        self.bottomLeft = bottomLeft
+        self.bottomRight = bottomRight
+
+class Solution:
+    def construct(self, grid: List[List[int]]) -> 'Node':
+        def build(x0, y0, length):
+            # Base case: only one cell
+            if length == 1:
+                return Node(grid[x0][y0] == 1, True, None, None, None, None)
+            
+            half = length // 2
+            # Divide into 4 quadrants
+            topLeft = build(x0, y0, half)
+            topRight = build(x0, y0 + half, half)
+            bottomLeft = build(x0 + half, y0, half)
+            bottomRight = build(x0 + half, y0 + half, half)
+
+            # If all 4 children are leaves with same value → merge
+            if (topLeft.isLeaf and topRight.isLeaf and
+                bottomLeft.isLeaf and bottomRight.isLeaf and
+                topLeft.val == topRight.val == bottomLeft.val == bottomRight.val):
+                return Node(topLeft.val, True, None, None, None, None)
+            
+            # Otherwise, return internal node
+            return Node(True, False, topLeft, topRight, bottomLeft, bottomRight)
+
+        return build(0, 0, len(grid))
+
+
+🔁 Dry Run:
+Input:
+
+grid = [[0,1],
+        [1,0]]
+
+Start with full grid (2x2).
+Split into 4 quadrants of size 1:
+topLeft = 0 → leaf(False)
+topRight = 1 → leaf(True)
+bottomLeft = 1 → leaf(True)
+bottomRight = 0 → leaf(False)
+Since not all leaves are equal → return internal node with 4 children.
+
+✅ Final Quad Tree matches expected output.
+
+📊 Time Complexity:
+-Each recursive call checks one subgrid.
+-For an n × n grid, total work = O(n²) (since each cell is visited once).
+
+🧠 Space Complexity:
+-Recursion stack depth = O(log n) (because we divide by 2 each time).
