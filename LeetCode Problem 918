@@ -1,0 +1,75 @@
+LeetCode Problem 918: Maximum Sum Circular Subarray
+
+Difficulty: Medium
+
+🧠 Problem Statement:
+
+You are given a circular integer array nums (length = n).
+Return the maximum possible sum of a non-empty subarray of nums.
+
+👉 Circular means:
+After the last element, you can wrap around to the first element.
+But each element can be used at most once in a subarray.
+
+Example 1:
+Input:nums = [1,-2,3,-2]
+
+Output:3
+
+Explanation:
+-Normal max subarray is [3] with sum = 3.
+-Wrapping around doesn’t give a better sum.
+
+✅ Approach:
+
+We use Kadane’s Algorithm twice:
+Case 1: Normal maximum subarray sum (no wrap-around).
+-Just run Kadane’s → gives max_sum.
+Case 2: Circular maximum subarray sum (with wrap-around).
+-Total sum of array = total.
+-Minimum subarray sum (found with Kadane’s variant) = min_sum.
+-Then max circular sum = total - min_sum.
+-Why? Because instead of picking the min subarray, we take the rest of the array (wrap-around part).
+Edge Case: If all numbers are negative, max_sum < 0.
+-In that case, the answer is just max_sum.
+-(Because total - min_sum = 0, which is invalid since we must pick at least one element).
+
+📝 Code:
+class Solution:
+    def maxSubarraySumCircular(self, nums: List[int]) -> int:
+        total = sum(nums)
+        
+        # Normal Kadane’s for max subarray
+        current_max = max_sum = nums[0]
+        # Kadane’s for min subarray
+        current_min = min_sum = nums[0]
+        
+        for num in nums[1:]:
+            current_max = max(num, current_max + num)
+            max_sum = max(max_sum, current_max)
+            
+            current_min = min(num, current_min + num)
+            min_sum = min(min_sum, current_min)
+        
+        # Case: all numbers negative
+        if max_sum < 0:
+            return max_sum
+        
+        # Max of normal vs circular
+        return max(max_sum, total - min_sum)
+
+🔁 Dry Run:
+Input: nums = [5, -3, 5]
+total = 7
+Normal Kadane’s → max_sum = 7 ([5, -3, 5])
+Min Kadane’s → min_sum = -3
+Circular sum = total - min_sum = 7 - (-3) = 10 ([5, 5] wrapping around)
+Answer = max(7, 10) = 10
+
+✅ Output: 10
+
+📊 Time Complexity:
+-O(n) → One pass for Kadane’s.
+
+🧠 Space Complexity:
+-O(1) → Only a few variables.
