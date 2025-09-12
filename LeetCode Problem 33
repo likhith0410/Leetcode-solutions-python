@@ -1,0 +1,68 @@
+LeetCode Problem 33: Search in Rotated Sorted Array
+
+Difficulty: Medium
+
+🧠 Problem Statement:
+You are given an integer array nums sorted in ascending order, but it may have been rotated at some pivot.
+Example: [0,1,2,4,5,6,7] rotated at index 3 becomes [4,5,6,7,0,1,2].
+Given a target, return its index if found, else return -1.
+⚡ You must solve it in O(log n) time.
+
+👉 Approach (Modified Binary Search):
+We use binary search but handle the rotation:
+Check mid: If nums[mid] == target, return mid.
+Decide which half is sorted:
+-If nums[left] <= nums[mid], then the left half is sorted.
+--If target lies in this sorted half, move right = mid - 1.
+--Else, search in right half → left = mid + 1.
+-Else, the right half is sorted.
+--If target lies in this sorted half, move left = mid + 1.
+--Else, search in left half → right = mid - 1.
+If not found after loop → return -1.
+
+✅ Code Implementation:
+
+class Solution:
+    def search(self, nums: List[int], target: int) -> int:
+        left, right = 0, len(nums) - 1
+
+        while left <= right:
+            mid = (left + right) // 2
+
+            # Found target
+            if nums[mid] == target:
+                return mid
+
+            # Left half sorted
+            if nums[left] <= nums[mid]:
+                if nums[left] <= target < nums[mid]:
+                    right = mid - 1
+                else:
+                    left = mid + 1
+            # Right half sorted
+            else:
+                if nums[mid] < target <= nums[right]:
+                    left = mid + 1
+                else:
+                    right = mid - 1
+
+        return -1
+
+🔁 Dry Run:
+Input: nums = [4,5,6,7,0,1,2], target = 0
+
+left=0, right=6 → mid=3 → nums[mid]=7.
+Left half [4,5,6,7] is sorted. Target 0 not in this half → move right → left=4.
+
+left=4, right=6 → mid=5 → nums[mid]=1.
+Left half [0,1] is sorted. Target 0 is in this range → right=4.
+
+left=4, right=4 → mid=4 → nums[mid]=0 = target ✅
+
+📌 Output: 4
+
+📊 Time Complexity:
+-Each step halves the search range → O(log n)
+
+🧠 Space Complexity:
+-No extra space → O(1)
