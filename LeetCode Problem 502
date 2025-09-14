@@ -1,0 +1,78 @@
+LeetCode Problem 502: IPO
+
+Difficulty: Hard
+
+🧠 Problem Statement:
+LeetCode wants to maximize its capital before IPO by completing at most k distinct projects.
+
+Each project i has:
+profits[i]: profit gained after completion.
+capital[i]: minimum capital required to start it.
+Initially, you have w capital.
+After completing a project, its profit is added to your capital.
+You can select at most k projects to maximize your final capital.
+
+👉 Return the maximum possible final capital.
+
+Example:
+Input: k = 2, w = 0, profits = [1,2,3], capital = [0,1,1]
+Output: 4
+
+Explanation:
+Start with capital 0.
+Can only do project 0 → profit 1, total capital = 1.
+Now capital = 1. You can start project 1 or 2.
+Choosing project 2 (profit = 3) gives max final capital.
+Final = 0 + 1 + 3 = 4.
+
+✅ Approach:
+We use greedy + heaps:
+Pair projects as (capital[i], profits[i]) and sort by capital required.
+Use a max-heap to track the most profitable projects that are affordable at the current capital.
+Repeat up to k times:
+-Add all projects whose required capital ≤ current capital into the heap.
+-If the heap is empty → stop (no projects can be done).
+-Otherwise, pick the most profitable project from heap and update capital.
+Return final capital.
+
+
+class Solution:
+    def findMaximizedCapital(self, k: int, w: int, profits: List[int], capital: List[int]) -> int:
+        projects = sorted(zip(capital, profits))  # sort by required capital
+        n = len(projects)
+        max_heap = []
+        i = 0  # pointer for projects
+        
+        for _ in range(k):
+            # add all projects that can be started with current capital
+            while i < n and projects[i][0] <= w:
+                heapq.heappush(max_heap, -projects[i][1])  # push profit (negative for max-heap)
+                i += 1
+            
+            if not max_heap:
+                break  # no project can be started
+            
+            # select the project with max profit
+            w += -heapq.heappop(max_heap)
+        
+        return w
+
+
+🔁 Dry Run:
+Input: k = 2, w = 0, profits = [1,2,3], capital = [0,1,1]
+Step 1: Sort projects → [(0,1), (1,2), (1,3)].
+Step 2: w = 0. Only project (0,1) can start. Heap = [1].
+Pick max = 1, update w = 1.
+Step 3: Now w = 1. Add projects (1,2) and (1,3) to heap. Heap = [3,2].
+Pick max = 3, update w = 4.
+Done (k=2).
+
+✅ Final Output: 4.
+
+📊 Time Complexity:
+-Sorting projects → O(n log n).
+-Each project pushed/popped from heap once → O(n log n).
+-Total: O(n log n).
+
+🧠 Space Complexity:
+-O(n) for heap storage.
