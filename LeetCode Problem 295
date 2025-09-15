@@ -1,0 +1,91 @@
+LeetCode Problem 295: Find Median from Data Stream
+
+Difficulty: Hard
+
+🧠 Problem Statement:
+The median is the middle value in an ordered integer list.
+If the list has odd size → median = middle value.
+If the list has even size → median = average of two middle values.
+You need to design a data structure MedianFinder with:
+MedianFinder() → Initializes the object.
+addNum(int num) → Adds an integer into the data stream.
+findMedian() → Returns the median of all numbers so far.
+
+Example 1:
+
+Input:
+["MedianFinder", "addNum", "addNum", "findMedian", "addNum", "findMedian"]
+[[], [1], [2], [], [3], []]
+
+Output:
+[null, null, null, 1.5, null, 2.0]
+
+Explanation:
+Add 1 → arr = [1]
+Add 2 → arr = [1,2] → median = (1+2)/2 = 1.5
+Add 3 → arr = [1,2,3] → median = 2.0
+
+✅ Approach:
+We use two heaps to efficiently track the median:
+Max Heap (left) → stores the smaller half of numbers (Python’s heapq is min-heap, so store negatives).
+Min Heap (right) → stores the larger half of numbers.
+Always maintain:
+-Either both heaps have the same size, OR
+-left has exactly 1 more element than right.
+Median rules:
+-If odd → top of left.
+-If even → average of tops of left and right.
+
+class MedianFinder:
+
+    def __init__(self):
+        # max heap (store negatives for Python's minheap)
+        self.left = []
+        # min heap
+        self.right = []
+
+    def addNum(self, num: int) -> None:
+        # Step 1: add to max heap
+        heapq.heappush(self.left, -num)
+
+        # Step 2: balance -> ensure every num in left <= every num in right
+        if self.left and self.right and (-self.left[0] > self.right[0]):
+            val = -heapq.heappop(self.left)
+            heapq.heappush(self.right, val)
+
+        # Step 3: keep sizes balanced (left can only be bigger by 1)
+        if len(self.left) > len(self.right) + 1:
+            val = -heapq.heappop(self.left)
+            heapq.heappush(self.right, val)
+        elif len(self.right) > len(self.left):
+            val = heapq.heappop(self.right)
+            heapq.heappush(self.left, -val)
+
+    def findMedian(self) -> float:
+        # odd size -> top of left
+        if len(self.left) > len(self.right):
+            return -self.left[0]
+        # even size -> average of both tops
+        return (-self.left[0] + self.right[0]) / 2
+
+        
+
+# Your MedianFinder object will be instantiated and called as such:
+# obj = MedianFinder()
+# obj.addNum(num)
+# param_2 = obj.findMedian()
+
+🔁 Dry Run:
+Input: addNum(1), addNum(2), findMedian(), addNum(3), findMedian()
+Add 1 → left = [1], right = [] → median = 1
+Add 2 → left = [1], right = [2] → median = (1+2)/2 = 1.5
+Add 3 → left = [2,1], right = [3] → median = 2
+
+✅ Output = [null, null, null, 1.5, null, 2.0]
+
+📊 Time Complexity:
+-addNum → O(log n) (heap push/pop)
+-findMedian → O(1)
+
+🧠 Space Complexity:
+-Heaps store all numbers → O(n)
