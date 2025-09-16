@@ -1,0 +1,75 @@
+LeetCode Problem 67: Add Binary
+
+Difficulty: Easy
+
+🧠 Problem Statement:
+You are given two binary strings a and b. Return their sum as a binary string.
+
+Example 1:
+Input:a = "11", b = "1"
+
+Output:"100"
+
+
+Explanation:
+11 (binary) = 3 (decimal)
+1 (binary) = 1 (decimal)
+Sum = 3 + 1 = 4 → "100" in binary.
+
+✅ Approach:
+We simulate binary addition (just like manual addition in base-10):
+Start from the rightmost bits of a and b.
+Use a carry to track overflow (like normal addition).
+At each step:
+-Add corresponding bits from a and b (if available).
+-Add carry.
+-Compute new bit = (sum % 2).
+-Update carry = (sum // 2).
+Continue until all bits are processed.
+Reverse the result and return as a string.
+
+class Solution:
+    def addBinary(self, a: str, b: str) -> str:
+        s = []       # result bits
+        carry = 0
+        i = len(a) - 1
+        j = len(b) - 1
+
+        # Process until both strings and carry are done
+        while i >= 0 or j >= 0 or carry:
+            if i >= 0:
+                carry += int(a[i])  # add bit from a
+                i -= 1
+            if j >= 0:
+                carry += int(b[j])  # add bit from b
+                j -= 1
+
+            s.append(str(carry % 2))  # current bit
+            carry //= 2               # update carry
+
+        return ''.join(reversed(s))   # reverse for correct order
+
+
+🔁 Dry Run:
+Input: a = "1010", b = "1011"
+Step-by-step:
+
+   1010
++  1011
+-------
+  10101
+
+Add last digits → 0 + 1 = 1 → bit=1, carry=0
+Next → 1 + 1 = 2 → bit=0, carry=1
+Next → 0 + 0 + 1(carry) = 1 → bit=1, carry=0
+Next → 1 + 1 = 2 → bit=0, carry=1
+Final carry=1 → bit=1
+Result = "10101"
+
+✅ Output = "10101"
+
+📊 Time Complexity:
+-O(max(len(a), len(b))) → process each bit once
+
+🧠 Space Complexity:
+-O(max(len(a), len(b))) → to store result
