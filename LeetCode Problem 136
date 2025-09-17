@@ -1,0 +1,51 @@
+LeetCode Problem 136: Single Number
+
+Difficulty: Easy
+
+🧠 Problem Statement:
+You are given a non-empty array of integers nums, where:
+Every element appears exactly twice, except for one element that appears only once.
+Find that single unique element.
+Constraints:
+Must run in O(n) time.
+Must use O(1) extra space.
+
+Example 1:
+Input:nums = [2,2,1]
+Output:1
+
+Explanation:
+2 appears twice.
+1 appears once → so answer = 1.
+
+✅ Approach (Bit Manipulation — XOR):
+Properties of XOR (^):
+-a ^ a = 0 (same numbers cancel out)
+-a ^ 0 = a
+-XOR is commutative and associative (order doesn’t matter).
+So, if we XOR all numbers:
+-Pairs cancel each other.
+-Only the single number remains.
+
+class Solution:
+    def singleNumber(self, nums: List[int]) -> int:
+        res = 0
+        for num in nums:
+            res ^= num   # cancel duplicates
+        return res
+
+
+🔁 Dry Run:
+Input: nums = [2,2,1]
+Start: res = 0
+Step 1: res = 0 ^ 2 = 2
+Step 2: res = 2 ^ 2 = 0
+Step 3: res = 0 ^ 1 = 1
+
+✅ Final Answer = 1
+
+📊 Time Complexity:
+-O(n) → we go through the array once.
+
+🧠 Space Complexity:
+-O(1) → only one variable used.
