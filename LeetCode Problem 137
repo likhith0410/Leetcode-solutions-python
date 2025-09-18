@@ -1,0 +1,69 @@
+LeetCode Problem 137: Single Number II
+
+Difficulty: Medium
+
+🧠 Problem Statement:
+You are given an integer array nums where:
+Every element appears three times, except one element that appears exactly once.
+Return the single element.
+Constraints:
+Must run in O(n) time.
+Must use O(1) extra space.
+Example 1
+Input:nums = [2,2,3,2]
+Output:3
+
+Explanation:
+2 appears 3 times → cancel it.
+3 appears once → answer = 3.
+
+✅ Approach (Bit Manipulation with Counters):
+We can’t use XOR alone here (like in problem 136), because numbers appear 3 times instead of 2.
+Idea:
+-Keep track of bits that appeared once (ones).
+-Keep track of bits that appeared twice (twos).
+-When a number appears the third time, both ones and twos reset (cancel out).
+Update rules for each num:
+-ones = (ones ^ num) & ~twos → track bits seen once, remove if seen in twos.
+-twos = (twos ^ num) & ~ones → track bits seen twice, remove if seen in ones.
+At the end, ones = number that appeared only once.
+
+class Solution:
+    def singleNumber(self, nums: List[int]) -> int:
+        ones, twos = 0, 0
+        for num in nums:
+            ones = (ones ^ num) & ~twos
+            twos = (twos ^ num) & ~ones
+        return ones
+
+
+🔁 Dry Run:
+Input: nums = [2,2,3,2]
+Start: ones = 0, twos = 0
+Step 1 → num = 2
+ones = (0 ^ 2) & ~0 = 2
+twos = (0 ^ 2) & ~2 = 0
+Step 2 → num = 2
+ones = (2 ^ 2) & ~0 = 0
+twos = (0 ^ 2) & ~0 = 2
+Step 3 → num = 3
+ones = (0 ^ 3) & ~2 = 1
+twos = (2 ^ 3) & ~1 = 2
+Step 4 → num = 2
+ones = (1 ^ 2) & ~2 = 3
+twos = (2 ^ 2) & ~3 = 0
+
+✅ Result: ones = 3 → that’s the unique number.
+
+📊 Time Complexity:
+-O(n) → one pass through array.
+
+🧠 Space Complexity:
+-O(1) → only two variables (ones, twos).
+
+⚡ Key Insight:
+Each bit’s count cycles like this:
+count = 0 → 1 → 2 → (reset back to 0)
+ones stores bits in count = 1 state.
+twos stores bits in count = 2 state.
+After 3rd occurrence, bits reset to 0.
