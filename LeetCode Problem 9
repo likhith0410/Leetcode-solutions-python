@@ -28,7 +28,14 @@ Compare:
 -If x == rev (even length case).
 -Or x == rev // 10 (odd length case, middle digit ignored).
 
-Code
+Code:2
+class Solution:
+    def isPalindrome(self, x: int) -> bool:
+        if x < 0:
+            return False
+        return str(x) == str(x)[::-1]        
+
+Code 2:
 class Solution:
     def isPalindrome(self, x: int) -> bool:
         # Step 1: Handle edge cases
