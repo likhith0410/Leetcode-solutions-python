@@ -1,0 +1,58 @@
+LeetCode Problem 66: Plus One
+
+Difficulty: Easy
+
+🧠 Problem Statement:
+You are given a large integer represented as an array of digits, where:
+digits[i] is the i-th digit of the integer (from most significant to least significant).
+No leading zeros exist.
+👉 Task: Increment the integer by 1 and return the resulting array of digits.
+
+Example 1
+Input:digits = [1,2,3]
+Check:Integer = 123 → 123 + 1 = 124
+Output:[1,2,4]
+
+
+✅ Approach (Simulate Addition with Carry):
+Start from the last digit (least significant).
+If digit < 9:
+-Add 1 and return immediately (no carry).
+If digit = 9:
+-Set it to 0 (carry over) and continue left.
+If all digits are 9 (like [9,9,9]):
+-After loop, prepend 1 at the beginning.
+
+Code
+class Solution:
+    def plusOne(self, digits: List[int]) -> List[int]:
+        n = len(digits)
+
+        # Traverse from rightmost digit
+        for i in range(n - 1, -1, -1):
+            if digits[i] < 9:   # No carry needed
+                digits[i] += 1
+                return digits
+            digits[i] = 0       # Set to 0 and carry to next digit
+
+        # If all digits were 9, add [1] at the front
+        return [1] + digits
+
+
+🔁 Dry Run:
+Input: digits = [9,9,9]
+i=2 → digit=9 → set to 0 → carry
+i=1 → digit=9 → set to 0 → carry
+i=0 → digit=9 → set to 0 → carry
+Loop ends → return [1,0,0,0]
+
+✅ Final Output: [1,0,0,0]
+
+📊 Time Complexity:
+-O(n) → in worst case, all digits are 9.
+
+🧠 Space Complexity:
+-O(1) (in-place), except final new [1] + digits in worst case.
+
+⚡ Key Insight:
+-This simulates manual addition, handling carry propagation efficiently without converting to integers or strings.
