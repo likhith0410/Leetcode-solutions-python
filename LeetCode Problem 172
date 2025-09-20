@@ -1,0 +1,54 @@
+LeetCode Problem 172: Factorial Trailing Zeroes
+
+Difficulty: Medium
+
+🧠 Problem Statement:
+Given an integer n, return the number of trailing zeroes in n! (factorial of n).
+👉 A trailing zero is formed by a factor of 10, which comes from multiplying 2 × 5.
+Since factorial numbers always have more 2s than 5s,
+The number of trailing zeros = count of 5s in prime factors of n!.
+
+Example 1
+Input:n = 3
+Check:3! = 6 → no trailing zero.
+Output:0
+
+Example 2
+Input:n = 5
+Check:5! = 120 → one trailing zero.
+Output:1
+
+
+✅ Approach (Count Factors of 5):
+Each multiple of 5 contributes at least one trailing zero.
+-Example: 5, 10, 15...
+Multiples of 25 contribute an extra zero (since 25 = 5 × 5).
+Multiples of 125 contribute even more, and so on.
+So keep dividing n //= 5, adding to count.
+
+Code
+class Solution:
+    def trailingZeroes(self, n: int) -> int:
+        count = 0
+        while n > 0:
+            n //= 5        # count how many 5s are in factors
+            count += n
+        return count
+
+
+🔁 Dry Run:
+Input: n = 100
+n=100 → n//5=20 → count=20
+n=20 → n//5=4 → count=24
+n=4 → n//5=0 → stop
+✅ Final Output: 24 (100! has 24 trailing zeros).
+
+📊 Time Complexity:
+-O(log₅(n)) → keep dividing by 5.
+
+🧠 Space Complexity:
+-O(1) → constant extra space.
+
+⚡ Key Insight:
+We don’t compute factorial directly (too large),
+instead we count factors of 5 efficiently.
