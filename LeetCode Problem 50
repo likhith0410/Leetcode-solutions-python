@@ -1,0 +1,54 @@
+LeetCode Problem 50: Pow(x, n)
+
+Difficulty: Medium
+
+🧠 Problem Statement:
+Implement pow(x, n), which calculates 
+ (x raised to the power n).
+
+👉 Key Points:
+
+You cannot use built-in power functions (x ** n or pow(x, n) in Python).
+
+Need to handle:
+Positive exponent
+Negative exponent (result = 
+Zero exponent (always 1)
+
+	​
+
+📝 Code:
+class Solution:
+    def myPow(self, x: float, n: int) -> float:
+        def fastPow(x, n):
+            if n == 0:
+                return 1
+            half = fastPow(x, n // 2)
+            if n % 2 == 0:
+                return half * half
+            else:
+                return half * half * x
+
+        if n < 0:        # negative exponent
+            x = 1 / x
+            n = -n
+        return fastPow(x, n)
+
+
+🔁 Dry Run:
+Input: x = 2, n = 10
+fastPow(2,10) → even → fastPow(2,5) squared
+fastPow(2,5) → odd → fastPow(2,2) squared × 2
+fastPow(2,2) → even → fastPow(2,1) squared
+fastPow(2,1) → odd → fastPow(2,0) squared × 2
+fastPow(2,0) = 1
+Final Result: 
+2^10=1024
+
+
+📊 Time Complexity:
+-O(log n) → because exponent is divided by 2 each step.
+
+🧠 Space Complexity:
+-O(log n) recursion stack.
+-Can be reduced to O(1) using iterative version.
