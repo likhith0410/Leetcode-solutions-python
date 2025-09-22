@@ -1,0 +1,62 @@
+LeetCode Problem 198: House Robber
+
+Difficulty: Medium
+
+🧠 Problem Statement:
+You are robbing houses along a street. Each house has money (nums[i]).
+You cannot rob two adjacent houses (otherwise the alarm goes off).
+Return the maximum money you can rob.
+
+👉 Key Insights:
+At house i, you have two choices:
+Skip house i → take max up to i-1.
+Rob house i → take nums[i] + max up to i-2.
+Formula:
+dp[i] = max(dp[i-1], nums[i] + dp[i-2])
+Use two variables to save space (prev1, prev2).
+
+✅ Approach:
+Handle edge cases:
+-No houses → return 0.
+-Only 1 house → return its value.
+Initialize:
+-prev2 = nums[0] (rob first house).
+-prev1 = max(nums[0], nums[1]) (best of first two).
+Loop from index 2 onward:
+-curr = max(prev1, nums[i] + prev2)
+-Update prev2, prev1.
+Return prev1 (best solution).
+
+📝 Code:
+class Solution:
+    def rob(self, nums: List[int]) -> int:
+        if not nums:
+            return 0
+        if len(nums) == 1:
+            return nums[0]
+
+        prev2 = nums[0]   # dp[i-2]
+        prev1 = max(nums[0], nums[1])  # dp[i-1]
+
+        for i in range(2, len(nums)):
+            curr = max(prev1, nums[i] + prev2)
+            prev2, prev1 = prev1, curr
+
+        return prev1
+
+
+🔁 Dry Run:
+Input: nums = [2,7,9,3,1]
+Step 0: prev2 = 2
+Step 1: prev1 = max(2,7) = 7
+Step 2: curr = max(7, 9+2=11) → 11 → update prev2=7, prev1=11
+Step 3: curr = max(11, 3+7=10) → 11 → update prev2=11, prev1=11
+Step 4: curr = max(11, 1+11=12) → 12 → update prev2=11, prev1=12
+
+✅ Final Output: 12
+
+📊 Time Complexity:
+-O(n): One pass through houses.
+
+🧠 Space Complexity:
+-O(1): Only keeps two variables (prev1, prev2).
