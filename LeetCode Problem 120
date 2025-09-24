@@ -1,0 +1,66 @@
+LeetCode Problem 120: Triangle
+
+Difficulty: Medium
+
+🧠 Problem Statement:
+You are given a triangle array, return the minimum path sum from top to bottom.
+👉 At each step, you may move to adjacent numbers on the next row.
+Formally, if you are at index i in row r, you can move to index i or i+1 in row r+1.
+
+Example:
+Input:
+
+triangle = [[2],
+            [3,4],
+            [6,5,7],
+            [4,1,8,3]]
+
+Output: 11
+Explanation: Path is 2 → 3 → 5 → 1 = 11.
+
+✅ Approach (Bottom-Up Dynamic Programming):
+
+Start from the second-last row and move upward.
+For each element triangle[i][j], update it as:
+-triangle[i][j] += min(triangle[i+1][j], triangle[i+1][j+1])
+→ This means: cost of this cell = its value + minimum of the two possible downward paths.
+After processing the whole triangle, the top element triangle[0][0] will contain the minimum path sum.
+
+📝 Code:
+
+class Solution:
+    def minimumTotal(self, triangle: List[List[int]]) -> int:
+        # Start from second last row and move upwards
+        for i in range(len(triangle) - 2, -1, -1):
+            for j in range(len(triangle[i])):
+                triangle[i][j] += min(triangle[i+1][j], triangle[i+1][j+1])
+        return triangle[0][0]
+
+
+🔁 Dry Run:
+Input:
+
+triangle = [[2],
+            [3,4],
+            [6,5,7],
+            [4,1,8,3]]
+
+
+Start at 2nd last row: [6,5,7]
+6 += min(4,1) → 6+1=7
+5 += min(1,8) → 5+1=6
+7 += min(8,3) → 7+3=10
+→ Row becomes [7,6,10].
+Next row: [3,4]
+3 += min(7,6) → 3+6=9
+4 += min(6,10) → 4+6=10
+→ Row becomes [9,10].
+Top row: [2]
+2 += min(9,10) → 2+9=11
+✅ Final answer = 11.
+
+📊 Time Complexity:
+-O(n^2) → Every element is processed once (n = number of rows).
+
+🧠 Space Complexity:
+-O(1) → Modified in place, no extra space needed.
