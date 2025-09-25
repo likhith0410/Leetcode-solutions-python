@@ -1,0 +1,78 @@
+LeetCode Problem 64: Minimum Path Sum
+
+Difficulty: Medium
+
+🧠 Problem Statement:
+You are given an m x n grid filled with non-negative numbers.
+Find the path from top-left to bottom-right that minimizes the sum of numbers along the path.
+
+👉 You can only move down or right at any point.
+
+Example:
+Input:
+grid = [[1,3,1],
+        [1,5,1],
+        [4,2,1]]
+
+Output: 7
+
+Explanation: The path is 1 → 3 → 1 → 1 → 1, total = 7.
+
+✅ Approach (Dynamic Programming – In-place update):
+Use the given grid itself as a DP table.
+Each cell grid[i][j] stores the minimum path sum to reach that cell.
+Transition:
+-From top-left corner (0,0) → just the starting value.
+-First row → can only come from left.
+-First column → can only come from above.
+-Other cells → take the minimum from top or left:
+-grid[i][j] += min(grid[i-1][j], grid[i][j-1])
+Final answer is at grid[m-1][n-1].
+
+📝 Code:
+
+class Solution:
+    def minPathSum(self, grid: List[List[int]]) -> int:
+        m, n = len(grid), len(grid[0])
+
+        # Update grid in-place (acts as dp table)
+        for i in range(m):
+            for j in range(n):
+                if i == 0 and j == 0:
+                    continue  # start cell
+                elif i == 0:  # only can come from left
+                    grid[i][j] += grid[i][j-1]
+                elif j == 0:  # only can come from above
+                    grid[i][j] += grid[i-1][j]
+                else:
+                    grid[i][j] += min(grid[i-1][j], grid[i][j-1])
+
+        return grid[m-1][n-1]
+
+
+🔁 Dry Run:
+Input:
+
+grid = [[1,3,1],
+        [1,5,1],
+        [4,2,1]]
+
+Start: [1,3,1]
+
+Update row 0: [1, 4, 5] (only from left).
+Next row: [1,5,1]
+First col: 1+1=2
+Middle: min(4,2)+5 = 7
+Last: min(5,7)+1 = 6 → row becomes [2,7,6].
+Last row: [4,2,1]
+First col: 2+4=6
+Middle: min(7,6)+2=8
+Last: min(6,8)+1=7 → row becomes [6,8,7].
+
+✅ Final answer = grid[2][2] = 7.
+
+📊 Time Complexity:
+-O(m * n) → every cell is processed once.
+
+🧠 Space Complexity:
+-O(1) → updated grid in place, no extra DP array.
