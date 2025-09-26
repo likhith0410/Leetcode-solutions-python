@@ -1,0 +1,70 @@
+LeetCode Problem 5: Longest Palindromic Substring
+
+Difficulty: Medium
+
+🧠 Problem Statement:
+Given a string s, return the longest palindromic substring in s.
+
+👉 A palindrome is a string that reads the same forward and backward.
+
+Example 1:
+Input:s = "babad"
+Output:"bab"
+
+Explanation: "aba" is also valid.
+
+Example 2:
+Input:s = "cbbd"
+Output:"bb"
+
+✅ Approach (Expand Around Center):
+
+A palindrome mirrors around its center.
+Possible centers:
+-Single character (odd-length palindrome).
+-Between two characters (even-length palindrome).
+Expand from each center and keep track of the longest palindrome found.
+Keep updating start and max_len when a longer palindrome is found.
+
+📝 Code:
+
+class Solution:
+    def longestPalindrome(self, s: str) -> str:
+        if len(s) < 2:
+            return s
+        
+        start, max_len = 0, 1
+
+        def expand(left, right):
+            nonlocal start, max_len
+            while left >= 0 and right < len(s) and s[left] == s[right]:
+                if (right - left + 1) > max_len:
+                    start = left
+                    max_len = right - left + 1
+                left -= 1
+                right += 1
+        
+        for i in range(len(s)):
+            # Odd-length palindrome
+            expand(i, i)
+            # Even-length palindrome
+            expand(i, i+1)
+        
+        return s[start:start + max_len]
+
+
+🔁 Dry Run:
+Input: s = "babad"
+i=0 → expand(0,0) → "b" (len=1).
+i=1 → expand(1,1) → "bab" (len=3).
+i=2 → expand(2,2) → "aba" (len=3, same length).
+i=3 → expand(3,3) → "a".
+i=4 → expand(4,4) → "d".
+
+✅ Final Answer: "bab" (or "aba")
+
+📊 Time Complexity:
+-O(n²) → For each index, expand up to n.
+
+🧠 Space Complexity:
+-O(1) → Only variables used, no extra storage.
