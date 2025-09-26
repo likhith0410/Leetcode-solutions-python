@@ -1,0 +1,72 @@
+LeetCode Problem 97: Interleaving String
+
+Difficulty: Medium
+
+🧠 Problem Statement:
+
+You are given three strings s1, s2, and s3.
+Return true if s3 is formed by an interleaving of s1 and s2.
+👉 Interleaving means characters from s1 and s2 are merged in order, but not shuffled.
+
+Example:
+Input:s1 = "aabcc", s2 = "dbbca", s3 = "aadbbcbcac"
+Output:true
+
+Explanation:
+Split s1 = "aa" + "bc" + "c", and s2 = "dbbc" + "a".
+Interleave: "aa" + "dbbc" + "bc" + "a" + "c" = "aadbbcbcac".
+✅ Matches s3.
+
+✅ Approach (Dynamic Programming with 1D array):
+
+Length check: If len(s1) + len(s2) != len(s3), return False.
+(Otherwise, impossible to form s3.)
+
+DP idea:
+-Let dp[j] represent whether s3[:i+j] can be formed using s1[:i] and s2[:j].
+-We only need one row at a time → use 1D DP array to save space.
+
+Transition:
+-Case 1: Take from s1 → if dp[j] is True and s1[i-1] == s3[i+j-1].
+-Case 2: Take from s2 → if dp[j-1] is True and s2[j-1] == s3[i+j-1].
+
+Final Answer: dp[n] (using all of s2).
+
+📝 Code (Python)
+class Solution:
+    def isInterleave(self, s1: str, s2: str, s3: str) -> bool:
+        if len(s1) + len(s2) != len(s3):
+            return False
+        
+        m, n = len(s1), len(s2)
+        dp = [False] * (n + 1)
+        dp[0] = True
+        
+        # Initialize first row (using only s2)
+        for j in range(1, n + 1):
+            dp[j] = dp[j-1] and s2[j-1] == s3[j-1]
+        
+        # Fill DP table
+        for i in range(1, m + 1):
+            # First column (using only s1)
+            dp[0] = dp[0] and s1[i-1] == s3[i-1]
+            for j in range(1, n + 1):
+                dp[j] = (dp[j] and s1[i-1] == s3[i+j-1]) or \
+                        (dp[j-1] and s2[j-1] == s3[i+j-1])
+        
+        return dp[n]
+
+🔁 Dry Run (Example)
+
+s1 = "aabcc", s2 = "dbbca", s3 = "aadbbcbcac"
+Step 1: Initialize dp for only s2: [True, False, False, ...].
+Step 2: Iterate over i (s1) and j (s2).
+Step 3: At each step, check if we can extend from s1 or s2.
+Final: dp[n] = True.
+
+✅ Answer = True.
+
+📊 Time & Space Complexity
+
+-Time Complexity: O(m * n) → every pair of (i, j) checked.
+-Space Complexity: O(n) → optimized 1D DP array.
