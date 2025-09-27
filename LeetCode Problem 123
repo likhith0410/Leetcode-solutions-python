@@ -1,0 +1,65 @@
+LeetCode Problem 123: Best Time to Buy and Sell Stock III
+
+Difficulty: Hard
+
+🧠 Problem Statement:
+
+You are given an array prices where prices[i] is the stock price on day i.
+You may complete at most 2 transactions (buy → sell).
+⚠️ You cannot hold more than one stock at a time.
+👉 Find the maximum profit achievable.
+
+Example:
+Input:prices = [3,3,5,0,0,3,1,4]
+Output:6
+
+Explanation:
+Buy at day 4 (price = 0), sell at day 6 (price = 3), profit = 3.
+Buy at day 7 (price = 1), sell at day 8 (price = 4), profit = 3.
+Total profit = 6.
+
+✅ Approach (State Machine / DP with Variables)
+
+We track 4 states:
+-buy1 → max profit after 1st buy.
+-sell1 → max profit after 1st sell.
+-buy2 → max profit after 2nd buy (using profit from 1st sell).
+-sell2 → max profit after 2nd sell.
+For each price p:
+-buy1 = max(buy1, -p) → either keep old buy1, or buy at today’s price.
+-sell1 = max(sell1, buy1 + p) → either keep old sell1, or sell today.
+-buy2 = max(buy2, sell1 - p) → either keep old buy2, or buy second stock today using sell1 profit.
+-sell2 = max(sell2, buy2 + p) → either keep old sell2, or sell today (second transaction).
+Answer = sell2
+
+📝 Code (Python)
+class Solution:
+    def maxProfit(self, prices: List[int]) -> int:
+        buy1, sell1 = float('-inf'), 0
+        buy2, sell2 = float('-inf'), 0
+
+        for p in prices:
+            buy1 = max(buy1, -p)          # Best profit after 1st buy
+            sell1 = max(sell1, buy1 + p)  # Best profit after 1st sell
+            buy2 = max(buy2, sell1 - p)   # Best profit after 2nd buy
+            sell2 = max(sell2, buy2 + p)  # Best profit after 2nd sell
+
+        return sell2
+
+🔁 Dry Run (Example: [3,3,5,0,0,3,1,4])
+
+Start: buy1=-inf, sell1=0, buy2=-inf, sell2=0
+Day 1 (p=3): buy1=-3, sell1=0, buy2=-3, sell2=0
+Day 2 (p=3): buy1=-3, sell1=0, buy2=-3, sell2=0
+Day 3 (p=5): buy1=-3, sell1=2, buy2=-3, sell2=2
+Day 4 (p=0): buy1=0, sell1=2, buy2=2, sell2=2
+Day 5 (p=0): buy1=0, sell1=2, buy2=2, sell2=2
+Day 6 (p=3): buy1=0, sell1=3, buy2=2, sell2=5
+Day 7 (p=1): buy1=0, sell1=3, buy2=2, sell2=5
+Day 8 (p=4): buy1=0, sell1=4, buy2=2, sell2=6
+
+✅ Final Answer = 6
+
+📊 Complexity
+-Time Complexity: O(n) (one pass over prices).
+-Space Complexity: O(1) (constant variables only).
