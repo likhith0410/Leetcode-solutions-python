@@ -1,0 +1,70 @@
+LeetCode Problem 221: Maximal Square
+
+Difficulty: Medium
+
+🧠 Problem Statement:
+You are given an m x n binary matrix filled with 0’s and 1’s.
+👉 Find the largest square containing only 1’s and return its area.
+
+Example 1:
+Input:
+matrix = [
+  ["1","0","1","0","0"],
+  ["1","0","1","1","1"],
+  ["1","1","1","1","1"],
+  ["1","0","0","1","0"]
+]
+Output:4
+
+Explanation:
+The largest square is 2x2 → area = 2² = 4.
+
+✅ Approach (Dynamic Programming)
+
+We use DP to track the side length of the largest square ending at each cell.
+
+Key Observations:
+If matrix[i][j] == "0" → cannot form a square here → dp[i][j] = 0.
+If matrix[i][j] == "1" →
+-dp[i][j] = 1 + min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1])
+-Meaning: size depends on top, left, and top-left neighbors.
+Keep track of max_side → largest square’s side length.
+Answer = max_side².
+
+📝 Code (Python)
+class Solution:
+    def maximalSquare(self, matrix: List[List[str]]) -> int:
+        if not matrix or not matrix[0]:
+            return 0
+        
+        m, n = len(matrix), len(matrix[0])
+        dp = [[0] * (n+1) for _ in range(m+1)]  # extra padding row & col
+        max_side = 0
+        
+        for i in range(1, m+1):
+            for j in range(1, n+1):
+                if matrix[i-1][j-1] == "1":
+                    dp[i][j] = 1 + min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1])
+                    max_side = max(max_side, dp[i][j])
+        
+        return max_side * max_side
+
+🔁 Dry Run
+
+Input:
+
+matrix = [
+  ["1","0","1"],
+  ["1","1","1"],
+  ["1","1","1"]
+]
+
+At (1,1): "1" → dp[1][1] = 1
+At (2,2): "1" → dp[2][2] = 1 + min(1,1,1) = 2
+At (3,3): "1" → dp[3][3] = 1 + min(2,2,2) = 3
+👉 Largest square = 3x3 → area = 9.
+
+📊 Complexity
+-Time Complexity: O(m * n) (iterate through all cells).
+-Space Complexity: O(m * n) (DP table).
+--Can be optimized to O(n) using rolling arrays.
